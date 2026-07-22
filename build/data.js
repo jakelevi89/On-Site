@@ -9,11 +9,11 @@ const BUSINESS = {
   address: "23452 Peralta Dr STE A, Laguna Hills, CA 92653",
   serviceAreaShort: "Orange County - San Diego - Los Angeles",
   social: {
-    facebook: "https://www.facebook.com/",
-    instagram: "https://www.instagram.com/",
-    houzz: "https://www.houzz.com/",
-    yelp: "https://www.yelp.com/",
-    linkedin: "https://www.linkedin.com/",
+    // Real profile URLs pulled from the live Wix site footer (2026-07-22)
+    facebook: "https://www.facebook.com/drapesandblindcleaning/",
+    instagram: "https://www.instagram.com/draperyandblindspecialists",
+    houzz: "https://www.houzz.com/pro/rosebahou/on-site-specialists",
+    yelp: "https://www.yelp.com/biz/on-site-custom-drapes-and-blinds-mission-viejo",
   },
 };
 
@@ -104,10 +104,33 @@ PAGES.push({
       ],
     },
     {
+      // Rotating image card — same four photos as the live site's homepage gallery
+      type: "carousel",
+      images: [
+        { file: "img_008.jpeg", alt: "Blue drapes" },
+        { file: "img_009.jpg", alt: "Blue drapes in a Newport Beach home" },
+        { file: "img_010.jpeg", alt: "Cellular shades in a Laguna Beach home" },
+        { file: "img_011.jpeg", alt: "Banded shades in an Irvine home" },
+      ],
+    },
+    {
       type: "text",
       heading: "Window Treatment Cleaning Specialists",
       body: [
         "At On-Site Specialists, we take pride in our expert drapery and blind cleaning services. Hunter Douglas refers our method of cleaning as one of the best in the industry — the injection/extraction method — which cleans window treatments on-site without the shrinkage or damage risked by ordinary cleaning methods.",
+      ],
+    },
+    {
+      // Brand logo strip — mirrors the live site's Hunter Douglas / Alta partner row
+      type: "brandbar",
+      items: [
+        {
+          file: "img_014.png",
+          alt: "Hunter Douglas",
+          href: "/service-areas/window-treatments-laguna-beach/hunter-douglas-shades",
+        },
+        { file: "img_012.png", alt: "Alta Window Fashions" },
+        { file: "img_015.jpg", alt: "Window treatments logo" },
       ],
     },
     {
