@@ -66,3 +66,30 @@ document.addEventListener("DOMContentLoaded", function () {
     restart();
   });
 });
+
+// ---- rotating hero banner (homepage slideshow) ----
+document.addEventListener("DOMContentLoaded", function () {
+  var hero = document.querySelector("[data-hero-slideshow]");
+  if (!hero) return;
+  var slides = hero.querySelectorAll(".hero-slide");
+  var dots = hero.querySelectorAll(".hero-dot");
+  if (slides.length < 2) return;
+  var current = 0;
+  var timer = null;
+  var INTERVAL = 5000;
+
+  function show(idx) {
+    current = (idx + slides.length) % slides.length;
+    slides.forEach(function (s, i) { s.classList.toggle("active", i === current); });
+    dots.forEach(function (d, i) { d.classList.toggle("active", i === current); });
+  }
+  function restart() {
+    if (timer) clearInterval(timer);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    timer = setInterval(function () { show(current + 1); }, INTERVAL);
+  }
+  dots.forEach(function (d, i) {
+    d.addEventListener("click", function () { show(i); restart(); });
+  });
+  restart();
+});

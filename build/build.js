@@ -280,7 +280,28 @@ function renderPage(page) {
   const heroImg = page.home ? heroFor(seed + "-hero") : heroFor(seed + "-h1");
   const bodyClass = page.home ? "page-home" : "page-inner";
 
-  const heroBlock = page.home
+  // Rotating hero banner (live site's SlideShowContainer). Slide 1 is inlined so
+  // the page renders identically with JS off; rotation lives in main.js.
+  const heroBlock = page.heroSlides
+    ? `<section class="hero hero-home hero-slideshow" data-hero-slideshow>
+        ${page.heroSlides
+          .map(
+            (s, i) =>
+              `<div class="hero-slide${i === 0 ? " active" : ""}" role="img" aria-label="${esc(s.alt)}" style="background-image:url('${u("/assets/images/" + s.file)}')"></div>`
+          )
+          .join("\n        ")}
+        <div class="hero-inner">
+          <h1>${esc(page.h1)}</h1>
+          ${page.h1sub ? `<p class="hero-sub">${esc(page.h1sub)}</p>` : ""}
+          <a class="btn btn-dark" href="${u("/custom-window-treatments-orange-county")}">Learn More</a>
+        </div>
+        <div class="hero-dots">
+          ${page.heroSlides
+            .map((s, i) => `<button class="hero-dot${i === 0 ? " active" : ""}" aria-label="Go to slide ${i + 1}"></button>`)
+            .join("\n          ")}
+        </div>
+      </section>`
+    : page.home
     ? `<section class="hero hero-home" style="background-image:url('${heroImg}')">
         <div class="hero-inner">
           <h1>${esc(page.h1)}</h1>

@@ -95,22 +95,22 @@ PAGES.push({
   home: true,
   h1: "Custom Window Treatments",
   h1sub: "Certified Cleaning - Affordable Pricing",
+  // Rotating hero banner — same 5 slides as the live site's Wix SlideShowContainer.
+  // Slide 1 (img_001) is the one Wix server-renders; img_008-011 are the other
+  // four slide backgrounds (all 2:1 banner-format images).
+  heroSlides: [
+    { file: "img_001.png", alt: "Custom window treatments showcase" },
+    { file: "img_008.jpeg", alt: "Blue drapes" },
+    { file: "img_009.jpg", alt: "Blue drapes in a Newport Beach home" },
+    { file: "img_010.jpeg", alt: "Cellular shades in a Laguna Beach home" },
+    { file: "img_011.jpeg", alt: "Banded shades in an Irvine home" },
+  ],
   sections: [
     {
       type: "text",
       heading: "Window Treatment Specialists",
       body: [
         "On-Site Custom Drapes & Blinds sales team is second to none! With expert knowledge, personalized service, and a commitment to excellence, they ensure every client finds the perfect window treatment solutions. We also offer cutting-edge technology & automation with PowerView® Automation, allowing you to schedule window treatments to open and close at your convenience. Available on almost all of our solutions, PowerView seamlessly integrates with smart home systems for ultimate convenience. Trust our extraordinary sales team to deliver the best in drapery, blinds, and automation—every time!",
-      ],
-    },
-    {
-      // Rotating image card — same four photos as the live site's homepage gallery
-      type: "carousel",
-      images: [
-        { file: "img_008.jpeg", alt: "Blue drapes" },
-        { file: "img_009.jpg", alt: "Blue drapes in a Newport Beach home" },
-        { file: "img_010.jpeg", alt: "Cellular shades in a Laguna Beach home" },
-        { file: "img_011.jpeg", alt: "Banded shades in an Irvine home" },
       ],
     },
     {
