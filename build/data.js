@@ -72,6 +72,36 @@ function whyChoose(items) {
   return { type: "checklist", items };
 }
 
+// ---- Cross-link lists (the "Check out our service areas / products / cleaning /
+// blog" link blocks that appear at the bottom of most live pages — a deliberate
+// internal-linking / local-SEO pattern; see seo-service-area-pages-win.md, which
+// credits this exact hub-and-spoke structure with real ROI). Kept as shared
+// constants so every page pulls from one source of truth.
+const PRODUCT_LINKS = [
+  { label: "Sheer Shades & Silhouettes", href: "/hunter-douglas-shades-blinds/sheer-shades" },
+  { label: "Drapery and Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
+  { label: "Woven Woods & Bamboo Shades", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo" },
+  { label: "Roller, Roman & Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades" },
+  { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
+  { label: "Wood & Faux Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
+  { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
+];
+const CLEANING_LINKS = [
+  { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
+  { label: "Drapery Cleaning", href: "/hunter-douglas-blind-cleaning/drapery-orange-county" },
+];
+const SERVICE_AREA_LINKS = [
+  { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
+  { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine" },
+  { label: "Huntington Beach", href: "/service-areas/window-treatments-huntington-beach" },
+  { label: "Laguna Beach", href: "/service-areas/window-treatments-laguna-beach" },
+];
+const BLOG_LINKS = [{ label: "Our Blog", href: "/window-treatment-blog-orange-county" }];
+
+function crossLink(heading, items) {
+  return { type: "linkgrid", heading, items, crossLink: true };
+}
+
 function crumbs(list) {
   return list;
 }
@@ -107,8 +137,13 @@ PAGES.push({
   ],
   sections: [
     {
-      type: "text",
+      // Live site uses a real Wix Video Box component here (video.wixstatic.com/
+      // video/132425_c808b352878a4a1cab761a4aff8c8545), not a static photo — pulled
+      // directly from the live site 2026-08-06 (see website-clone-comparison doc).
+      type: "textVideo",
       heading: "Window Treatment Specialists",
+      videoFile: "hero-720p.mp4",
+      poster: "img_001.png",
       body: [
         "On-Site Custom Drapes & Blinds sales team is second to none! With expert knowledge, personalized service, and a commitment to excellence, they ensure every client finds the perfect window treatment solutions. We also offer cutting-edge technology & automation with PowerView® Automation, allowing you to schedule window treatments to open and close at your convenience. Available on almost all of our solutions, PowerView seamlessly integrates with smart home systems for ultimate convenience. Trust our extraordinary sales team to deliver the best in drapery, blinds, and automation—every time!",
       ],
@@ -120,6 +155,25 @@ PAGES.push({
         "At On-Site Specialists, we take pride in our expert drapery and blind cleaning services. Hunter Douglas refers our method of cleaning as one of the best in the industry — the injection/extraction method — which cleans window treatments on-site without the shrinkage or damage risked by ordinary cleaning methods.",
       ],
     },
+    {
+      // Newport Beach project-photo showcase — live homepage has a captioned photo
+      // gallery + "Check out our Hunter Douglas blinds in Newport Beach" teaser here,
+      // reusing the same 4 photos as the hero slideshow (img_008-011).
+      type: "carousel",
+      heading: "Check out our Hunter Douglas blinds in Newport Beach for custom solutions.",
+      // Live site has a plain "Newport Beach" text link here — redesigned as a
+      // proper pill CTA button per Jake, 2026-08-06 ("don't match it identically").
+      cta: { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
+      images: [
+        { file: "img_008.jpeg", alt: "Blue drapes" },
+        { file: "img_009.jpg", alt: "Blue and white drapes inside a Newport Beach home" },
+        { file: "img_010.jpeg", alt: "Cellular shades inside a Laguna Beach home" },
+        { file: "img_011.jpeg", alt: "Banded shades inside an Irvine home" },
+      ],
+    },
+    crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
+    crossLink("Check out our cleaning services:", CLEANING_LINKS),
+    crossLink("Check out our products page:", PRODUCT_LINKS),
     {
       // Brand logo strip — mirrors the live site's Hunter Douglas / Alta partner row
       type: "brandbar",
@@ -172,15 +226,27 @@ PAGES.push({
       items: [
         "Certified Hunter Douglas Dealer & Installer",
         "20+ Years of Industry Expertise",
-        "Professionally trained team for window treatment applications, motorization, and cleaning",
-        "One-stop shop: sales, installation, repairs, and cleaning",
+        "Eco-Friendly Cleaning Solutions for Drapes & Blinds",
+        "Serving Newport Beach, Laguna Beach, Irvine & More",
+        "Shop-at-Home Convenience – We Bring the Store to You!",
       ],
     },
     {
       type: "text",
       heading: "Meet Our Team",
-      body: ["Our expert team is professionally trained in window treatment applications, motorization, and cleaning techniques. Whether you're looking for custom window treatments or need blind cleaning, our team is here to help!"],
+      body: ["Our expert team is professionally trained in window treatment applications, motorization, and cleaning techniques. Whether you're purchasing new blinds & drapery or cleaning & maintaining your existing treatments, we ensure the highest level of precision and care.", "Every design solution is tailored to match your space, style, and budget. We prioritize exceptional customer service, competitive pricing, and on-time scheduling to make your experience seamless."],
     },
+    {
+      type: "linkgrid",
+      heading: "One Stop Shop",
+      intro: "Let us bring our shop-at-home service to your door! Looking for custom blinds or drapery? Explore our Hunter Douglas Shades & Blinds. Need professional drapery or blind cleaning? Learn about our drapery cleaning services.",
+      items: [
+        { label: "Hunter Douglas Shades & Blinds", href: "/hunter-douglas-shades-blinds" },
+        { label: "Drapery & Blind Cleaning", href: "/hunter-douglas-blind-cleaning" },
+      ],
+    },
+    crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
+    crossLink("Check out our products page:", PRODUCT_LINKS),
   ],
 });
 
@@ -281,7 +347,7 @@ PAGES.push({
 
 PAGES.push({
   path: "/hunter-douglas-shades-blinds",
-  title: "Hunter Douglas Shades & Blinds | On-Site Custom Drapes & Blinds",
+  title: "Roller Shades & Blinds | On-Site Custom Drapes & Blinds",
   description: "Explore our full line of Hunter Douglas shades, blinds, drapery, and motorization for Orange County homes.",
   nav: "Products",
   h1: "Custom Window Treatments for Every Style & Need",
@@ -302,14 +368,8 @@ PAGES.push({
         { label: "Wood & Faux Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
       ],
     },
-    {
-      type: "linkgrid",
-      heading: "Additional Services",
-      items: [
-        { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
-        { label: "Drapery Cleaning", href: "/hunter-douglas-blind-cleaning/drapery-orange-county" },
-      ],
-    },
+    crossLink("Check out our cleaning services:", CLEANING_LINKS),
+    crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
   ],
 });
 
@@ -507,6 +567,14 @@ PAGES.push({
       ],
     },
     { type: "cta", heading: "Ready to restore your window treatments?", body: ["Contact us for a free consultation."] },
+    {
+      // "Cleaning Quick Form" — see wix-forms-notification-fix.md. Distinct from the
+      // full Contact Us form; a submission here specifically signals cleaning intent.
+      type: "quickForm",
+      heading: "Get a Free Quote",
+      intro: "Enter your information below for a free quote today!",
+    },
+    crossLink("Check out our products page:", PRODUCT_LINKS),
   ],
 });
 
@@ -595,13 +663,19 @@ PAGES.push({
         { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine" },
       ],
     },
+    crossLink("Check out our products page:", PRODUCT_LINKS),
+    crossLink("Check out our cleaning services:", CLEANING_LINKS),
+    crossLink("Check out our blog for inspiration:", BLOG_LINKS),
   ],
 });
 
 function cityHub(city, path, intro, neighborhoods, subs) {
   PAGES.push({
     path,
-    title: `Window Treatments & Blinds in ${city} | Custom Shades & Shutters`,
+    // Live tab title for these hub pages is the short "<City> | On-Site Custom Drapes
+    // & Blinds" form (confirmed directly for Newport Beach 2026-08-06) — kept distinct
+    // from the longer, more descriptive <h1>, which is normal/intentional SEO practice.
+    title: `${city} | On-Site Custom Drapes & Blinds`,
     description: `Custom window treatments in ${city} — blinds, shades, shutters, drapery, and motorized smart shades. Free in-home consultation.`,
     nav: "Service Areas",
     h1: `Window Treatments & Blinds in ${city} | Custom Shades & Shutters`,
@@ -613,6 +687,10 @@ function cityHub(city, path, intro, neighborhoods, subs) {
         heading: `Check out our services in ${city}`,
         items: subs,
       },
+      crossLink(
+        "Check out our other service areas:",
+        SERVICE_AREA_LINKS.filter((l) => l.label !== city)
+      ),
     ],
   });
 }

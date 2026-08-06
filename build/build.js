@@ -78,6 +78,16 @@ function hashCode(str) {
   return h;
 }
 
+// Simple, generic-style icon glyphs for the footer social row — a deliberate
+// redesign rather than matching the live Wix site's plain text-link list (per Jake,
+// 2026-08-06: "don't match it identically, make an improved design").
+const ICONS = {
+  facebook: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.2-2.3.5-.6.3-1.2.6-1.7 1.2-.6.5-.9 1.1-1.2 1.7-.2.6-.4 1.4-.5 2.3C2.1 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 1 .2 1.7.5 2.3.3.6.6 1.2 1.2 1.7.5.6 1.1.9 1.7 1.2.6.2 1.4.4 2.3.5C8.9 21.9 9.3 22 12 22s3.1 0 4.1-.1c1-.1 1.7-.2 2.3-.5.6-.3 1.2-.6 1.7-1.2.6-.5.9-1.1 1.2-1.7.2-.6.4-1.4.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.2-1.7-.5-2.3a4.6 4.6 0 0 0-1.2-1.7A4.6 4.6 0 0 0 18.4 2.6c-.6-.2-1.4-.4-2.3-.5C15.1 2 14.7 2 12 2Zm0 1.8c2.6 0 3 0 4 .1.9 0 1.4.2 1.8.3.4.2.7.4 1 .7.3.3.5.6.7 1 .2.4.3.9.3 1.8.1 1 .1 1.4.1 4s0 3-.1 4c0 .9-.2 1.4-.3 1.8-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.4.2-.9.3-1.8.3-1 .1-1.4.1-4 .1s-3 0-4-.1c-.9 0-1.4-.2-1.8-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.2-.4-.3-.9-.3-1.8-.1-1-.1-1.4-.1-4s0-3 .1-4c0-.9.2-1.4.3-1.8.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.4-.2.9-.3 1.8-.3 1-.1 1.4-.1 4-.1Zm0 3a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4Zm0 8.6a3.4 3.4 0 1 1 0-6.8 3.4 3.4 0 0 1 0 6.8Zm5.4-8.8a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/></svg>`,
+  houzz: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 9h3v11h5v-6h4v6h5V9h3L12 2Z"/></svg>`,
+  yelp: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.4 6.5L21 9l-5 4.3L17.5 20 12 16.3 6.5 20 8 13.3 3 9l6.6-.5L12 2Z"/></svg>`,
+};
+
 function esc(s) {
   if (s == null) return "";
   return String(s)
@@ -136,10 +146,10 @@ function renderFooter() {
         </ul>
       </nav>
       <div class="footer-social">
-        <a href="${BUSINESS.social.facebook}" aria-label="Facebook" target="_blank" rel="noopener">Facebook</a>
-        <a href="${BUSINESS.social.instagram}" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
-        <a href="${BUSINESS.social.houzz}" aria-label="Houzz" target="_blank" rel="noopener">Houzz</a>
-        <a href="${BUSINESS.social.yelp}" aria-label="Yelp" target="_blank" rel="noopener">Yelp</a>
+        <a class="social-icon" href="${BUSINESS.social.facebook}" aria-label="Facebook" target="_blank" rel="noopener">${ICONS.facebook}</a>
+        <a class="social-icon" href="${BUSINESS.social.instagram}" aria-label="Instagram" target="_blank" rel="noopener">${ICONS.instagram}</a>
+        <a class="social-icon" href="${BUSINESS.social.houzz}" aria-label="Houzz" target="_blank" rel="noopener">${ICONS.houzz}</a>
+        <a class="social-icon" href="${BUSINESS.social.yelp}" aria-label="Yelp" target="_blank" rel="noopener">${ICONS.yelp}</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -160,11 +170,34 @@ function renderSection(section, pageSeed, idx) {
         </div>
       </section>`;
     }
+    case "textVideo": {
+      // Same layout as "text" but with a real <video> instead of a photo — used where
+      // the live site has an actual Wix Video Box component instead of a static image
+      // (e.g. the homepage's "Window Treatment Specialists" section).
+      const poster = section.poster ? u("/assets/images/" + section.poster) : "";
+      return `<section class="section section-with-image">
+        <div class="section-image section-video">
+          <video autoplay muted loop playsinline preload="metadata"${poster ? ` poster="${poster}"` : ""}>
+            <source src="${u("/assets/videos/" + section.videoFile)}" type="video/mp4">
+          </video>
+        </div>
+        <div class="section-body">
+          ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+          ${section.body.map((p) => `<p>${esc(p)}</p>`).join("\n          ")}
+        </div>
+      </section>`;
+    }
     case "carousel": {
       // Rotating image card (autoplay + arrows + dots) — replicates the live site's
       // homepage Wix gallery. Logic lives in assets/js/main.js; degrades to the
       // first slide if JS is disabled.
       return `<section class="section">
+        ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+        ${
+          section.cta
+            ? `<a class="btn-pill" href="${u(section.cta.href)}">${esc(section.cta.label)} <span class="arrow">&#8594;</span></a>`
+            : ""
+        }
         <div class="carousel" data-carousel>
           <div class="carousel-track">
             ${section.images
@@ -208,6 +241,7 @@ function renderSection(section, pageSeed, idx) {
     case "linkgrid": {
       return `<section class="section">
         ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+        ${section.intro ? `<p>${esc(section.intro)}</p>` : ""}
         <div class="link-grid">
           ${section.items.map((i) => `<a class="link-card" href="${u(i.href)}">${esc(i.label)}</a>`).join("\n          ")}
         </div>
@@ -265,6 +299,24 @@ function renderSection(section, pageSeed, idx) {
           <label>Phone<input type="tel" name="phone"></label>
           <label>Where did you hear about us?<input type="text" name="referral"></label>
           <label>Message<textarea name="message" rows="4"></textarea></label>
+          <button type="submit" class="btn btn-accent">Send</button>
+          <p class="form-note">This form needs to be connected to an email service (e.g. Formspree) before it will actually deliver messages — see the README.</p>
+        </form>
+      </section>`;
+    }
+    case "quickForm": {
+      // "Cleaning Quick Form" — the smaller First/Last/Email lead form embedded on the
+      // live Cleaning page (distinct from the full Contact Us form; see
+      // wix-forms-notification-fix.md — page-of-origin is a useful lead signal).
+      return `<section class="section contact-section quick-quote-section">
+        <div class="contact-info">
+          ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+          ${section.intro ? `<p class="lead">${esc(section.intro)}</p>` : ""}
+        </div>
+        <form class="contact-form" name="cleaning-quick-form" method="POST" data-static-form>
+          <label>First Name<input type="text" name="firstName" required></label>
+          <label>Last Name<input type="text" name="lastName" required></label>
+          <label>Email<input type="email" name="email" required></label>
           <button type="submit" class="btn btn-accent">Send</button>
           <p class="form-note">This form needs to be connected to an email service (e.g. Formspree) before it will actually deliver messages — see the README.</p>
         </form>
@@ -358,3 +410,31 @@ for (const page of PAGES) {
 }
 
 console.log(`Built ${count} pages.`);
+
+// ---- sitemap.xml + robots.txt ----
+// Always declares the real production domain (on-sitespecialists.com), independent of
+// BASE_PATH/GH Pages preview hosting — this is what search engines should index once
+// DNS points here, not the current jakelevi89.github.io preview.
+const PRODUCTION_ORIGIN = "https://www.on-sitespecialists.com";
+const today = "2026-08-06"; // bump this when regenerating after real content changes
+const sitemapUrls = PAGES.map(
+  (p) => `  <url>
+    <loc>${PRODUCTION_ORIGIN}${p.path === "/" ? "/" : p.path + "/"}</loc>
+    <lastmod>${today}</lastmod>
+  </url>`
+).join("\n");
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapUrls}
+</urlset>
+`;
+fs.writeFileSync(path.join(ROOT, "sitemap.xml"), sitemapXml);
+
+const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: ${PRODUCTION_ORIGIN}/sitemap.xml
+`;
+fs.writeFileSync(path.join(ROOT, "robots.txt"), robotsTxt);
+
+console.log(`Wrote sitemap.xml (${PAGES.length} URLs) and robots.txt.`);
