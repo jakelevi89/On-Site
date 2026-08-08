@@ -78,8 +78,44 @@ free service wired in instead. The easiest options:
 Until this is connected, keep the real phone number and email prominent on the site (they already
 are) so customers can still reach you directly.
 
+## AI chat widget
+
+The floating chat bubble in the bottom-right is an AI assistant trained on this site's own
+content — products, the Hunter Douglas line, the injection/extraction cleaning method, repairs,
+and the service areas. It replaces the Wix chat widget the original site used, and it's built on
+the same architecture as the Custom Voice Automations and Rapid Lending Solutions site chatbots.
+
+- `assets/js/chat-widget.js` — the widget. Injects its own markup, so pages only need the one
+  script tag `build.js` already emits. Conversation history lives in the visitor's `sessionStorage`
+  and nowhere else.
+- `assets/css/style.css` — styling, under "AI chat widget" (On-Site's red/charcoal palette).
+- `functions/api/chat.js` — the server-side piece. Holds the system prompt and proxies to OpenAI so
+  the API key never reaches the browser.
+
+**It only answers once the site is on Cloudflare Pages** (option A above). Pages Functions
+auto-deploy with a normal git push — no separate deploy step — but GitHub Pages is static-only and
+cannot run `functions/`, so on the `jakelevi89.github.io/On-Site/` preview link the widget opens and
+looks right but replies "the assistant isn't switched on for this preview link yet" and gives the
+phone number. To switch it on:
+
+1. Deploy to Cloudflare Pages.
+2. In the Pages project → **Settings → Environment variables**, add `OPENAI_API_KEY` as an
+   **encrypted** variable. (Optional: `OPENAI_MODEL` to override the default.) Never commit the key.
+3. Add the project's real domain to `ALLOWED_ORIGINS` at the top of `functions/api/chat.js` —
+   including the `*.pages.dev` subdomain if you're testing there, or the browser gets a 403.
+
+What the assistant will **not** do, by design: quote any price, ballpark, or discount amount (there's
+no pricing on the site — every job is quoted from the actual windows); promise appointment times or
+lead times; interpret Hunter Douglas warranty terms; or give DIY cleaning/measuring advice that could
+ruin a custom order. Every one of those routes to (949) 770-8989 instead. The chat creates no lead
+record — the phone number is the path that actually reaches the team.
+
+To preview it locally with working replies, point `window.ONSITE_CHAT_ENDPOINT` at a host that runs
+the function, or run the site behind any small dev server that serves `functions/api/chat.js` at
+`/api/chat`.
+
 ## What's NOT automated yet
 
 - DNS / domain cutover from GoDaddy — do this only after you've reviewed the preview link.
 - The contact form backend (see above).
-- Any live chat widget (the original site used a Wix chat widget — not replicated here).
+- The chat widget's `OPENAI_API_KEY` / Cloudflare Pages deploy (see above).

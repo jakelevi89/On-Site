@@ -426,3 +426,214 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   transition: background 0.2s, transform 0.2s;
 }
 .hero-dot.active { background: #f31b20; transform: scale(1.2); }
+
+/* ============ AI chat widget (markup injected by assets/js/chat-widget.js) ============
+   Same architecture and craft as the Custom Voice Automations and Rapid Lending
+   Solutions widgets (pulsing toggle, first-visit teaser, session-persisted
+   history), rendered in On-Site's light red/charcoal palette instead of their
+   dark glass panels — this site is white-background, so a dark floating panel
+   would read as a bolted-on third-party chat box. */
+#onsiteChat {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 200; /* above the sticky site header (z-index 100) */
+  font-family: var(--font-body);
+}
+/* CRITICAL: the panel/teaser rules below set `display`, which would otherwise beat
+   the UA stylesheet's [hidden]{display:none} and leave the widget stuck open. */
+#onsiteChat [hidden] { display: none !important; }
+
+/* pulsing ring draws the eye on first visit, quiets once the panel is opened */
+@keyframes chatPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(243, 27, 32, 0.5), 0 6px 18px rgba(46, 56, 56, 0.3); }
+  70%  { box-shadow: 0 0 0 14px rgba(243, 27, 32, 0), 0 6px 18px rgba(46, 56, 56, 0.3); }
+  100% { box-shadow: 0 0 0 0 rgba(243, 27, 32, 0), 0 6px 18px rgba(46, 56, 56, 0.3); }
+}
+.chat-pulse { animation: chatPulse 2.2s ease-out infinite; }
+@keyframes teaserIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+#chatTeaser {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: max-content;
+  max-width: 230px;
+  animation: teaserIn 0.3s ease forwards;
+  cursor: pointer;
+}
+#chatTeaser .teaser-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 10px 28px rgba(46, 56, 56, 0.18);
+  padding: 12px 15px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--brand-dark);
+}
+#chatTeaserClose {
+  background: none;
+  border: 0;
+  color: var(--text-light);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+#chatTeaserClose:hover { color: var(--brand-red); }
+
+#chatToggle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--brand-red);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(46, 56, 56, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.15s ease;
+}
+#chatToggle:hover {
+  background: #d21419;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(46, 56, 56, 0.4);
+}
+#chatToggle svg { width: 25px; height: 25px; }
+
+#chatPanel {
+  position: absolute;
+  bottom: 74px;
+  right: 0;
+  width: 92vw;
+  max-width: 380px;
+  height: 70vh;
+  max-height: 560px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 22px 55px rgba(46, 56, 56, 0.28);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px;
+  flex-shrink: 0;
+  background: var(--brand-dark);
+  color: #fff;
+}
+.chat-head p { margin: 0; font-size: 0.92rem; font-weight: 600; font-family: var(--font-head); }
+.chat-head .chat-sub { font-size: 0.75rem; color: #b9c2c2; }
+/* Slat mark — three stacked bars, a nod to a blind rather than CVA's voice waveform */
+.chat-slats { display: grid; gap: 3px; width: 22px; flex-shrink: 0; }
+.chat-slats i {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--brand-red);
+}
+.chat-slats i:nth-child(2) { background: #fff; opacity: 0.85; }
+.chat-slats i:nth-child(3) { background: var(--brand-red); opacity: 0.75; }
+
+#chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  font-size: 0.9rem;
+  background: var(--bg-alt);
+}
+.chat-row { display: flex; }
+.chat-row.is-user { justify-content: flex-end; }
+.chat-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.is-user .chat-bubble {
+  background: var(--brand-red);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.is-bot .chat-bubble {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-bottom-left-radius: 4px;
+}
+
+#chatForm {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: #fff;
+}
+#chatInput {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+#chatInput::placeholder { color: var(--text-light); }
+#chatInput:focus {
+  outline: none;
+  border-color: rgba(243, 27, 32, 0.6);
+  box-shadow: 0 0 0 3px rgba(243, 27, 32, 0.14);
+}
+#chatSend {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand-red);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#chatSend:hover { background: #d21419; }
+.chat-legal {
+  font-size: 0.68rem;
+  color: var(--text-light);
+  text-align: center;
+  padding: 0 14px 11px;
+  margin: 0;
+  line-height: 1.4;
+  background: #fff;
+}
+
+@media (max-width: 800px) {
+  #onsiteChat { bottom: 14px; right: 14px; }
+  #chatPanel { height: 72vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-pulse { animation: none; }
+  #chatTeaser { animation: none; }
+}

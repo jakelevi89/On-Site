@@ -398,6 +398,11 @@ ${sectionsHtml}
 </main>
 ${renderFooter()}
 <script src="${u("/assets/js/main.js")}"></script>
+<!-- AI chat widget. Injects its own markup; talks to the /api/chat function
+     (functions/api/chat.js), which only runs on Cloudflare Pages. On the static
+     GitHub Pages preview it degrades to a "call us" message. To point it at a
+     different host, define window.ONSITE_CHAT_ENDPOINT before this script. -->
+<script src="${u("/assets/js/chat-widget.js")}" defer></script>
 </body>
 </html>
 `;
