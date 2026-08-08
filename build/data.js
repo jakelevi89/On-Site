@@ -17,35 +17,19 @@ const BUSINESS = {
   },
 };
 
-// Primary nav (used in header)
+// Primary nav (used in header).
+// EVERY item is a PLAIN link — the live site has no hover submenus anywhere in its
+// top nav. Products and Cleaning had `children` arrays (a 7-item and a 2-item
+// mega-dropdown); both were removed 2026-08-08 to match live, the same way Service
+// Areas was fixed in the prior pass. Category and sub-page links reach visitors
+// through the page bodies (the Products index category grid, the Cleaning landing
+// cards, the Featured Service Areas cards) and the bottom cross-link blocks, which
+// is also where they do internal-linking work. Do not re-add `children` here.
 const NAV = [
   { label: "Home", href: "/" },
-  {
-    label: "Products",
-    href: "/hunter-douglas-shades-blinds",
-    children: [
-      { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
-      { label: "Sheer Shades & Silhouettes", href: "/hunter-douglas-shades-blinds/sheer-shades" },
-      { label: "Drapery & Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
-      { label: "Wood & Faux Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
-      { label: "Roller, Roman & Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades" },
-      { label: "Woven Woods & Bamboo Shades", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo" },
-      { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
-    ],
-  },
-  {
-    label: "Cleaning",
-    href: "/hunter-douglas-blind-cleaning",
-    children: [
-      { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
-      { label: "Drapery Cleaning", href: "/hunter-douglas-blind-cleaning/drapery-orange-county" },
-    ],
-  },
+  { label: "Products", href: "/hunter-douglas-shades-blinds" },
+  { label: "Cleaning", href: "/hunter-douglas-blind-cleaning" },
   { label: "About Us", href: "/about-us" },
-  // Service Areas is a PLAIN link to the index page — no hover submenu. This matches
-  // the live site, where city links live only inline in the Service Areas page body
-  // ("Featured Service Areas" grid) and in the bottom cross-link blocks. Do not
-  // re-add a `children` array here.
   { label: "Service Areas", href: "/service-areas" },
   { label: "Our Work", href: "/our-work" },
   { label: "Blog", href: "/window-treatment-blog-orange-county" },
@@ -144,14 +128,14 @@ PAGES.push({
       videoFile: "hero-720p.mp4",
       poster: "img_001.png",
       body: [
-        "On-Site Custom Drapes & Blinds sales team is second to none! With expert knowledge, personalized service, and a commitment to excellence, they ensure every client finds the perfect window treatment solutions. We also offer cutting-edge technology & automation with PowerView® Automation, allowing you to schedule window treatments to open and close at your convenience. Available on almost all of our solutions, PowerView seamlessly integrates with smart home systems for ultimate convenience. Trust our extraordinary sales team to deliver the best in drapery, blinds, and automation—every time!",
+        "On-Site Custom Drapes & Blinds sales team is second to none! With expert knowledge, personalized service, and a commitment to excellence, they ensure every client finds the perfect [window treatment](/custom-window-treatments-orange-county) solutions. We also offer cutting-edge technology & automation with [PowerView® Automation](/hunter-douglas-shades-blinds/motorized-blinds-repairs), allowing you to schedule window treatments to open and close at your convenience. Available on almost all of our solutions, PowerView seamlessly integrates with smart home systems for ultimate convenience. Trust our extraordinary sales team to deliver the best in [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), [blinds](/hunter-douglas-shades-blinds), and automation—every time!",
       ],
     },
     {
       type: "text",
       heading: "Window Treatment Cleaning Specialists",
       body: [
-        "At On-Site Specialists, we take pride in our expert drapery and blind cleaning services. Hunter Douglas refers our method of cleaning to their clients, recognizing our expertise in blind and drapery cleaning. We use the Injection-Extraction method—an advanced, eco-friendly cleaning technique that effectively removes dust, allergens, and stains while preserving fabric integrity. Our specialized process extends the life of your window treatments, ensuring they remain fresh, spotless, and like new. With meticulous attention to detail and a commitment to excellence, we provide professional, on-site cleaning without the hassle of removal, keeping your home or business looking its best.",
+        "At On-Site Specialists, we take pride in our expert [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county) and [blind cleaning](/hunter-douglas-blind-cleaning/orange-county) services. [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) refers our method of cleaning to their clients, recognizing our expertise in blind and drapery cleaning. We use the Injection-Extraction method—an advanced, eco-friendly cleaning technique that effectively removes dust, allergens, and stains while preserving fabric integrity. Our specialized process extends the life of your window treatments, ensuring they remain fresh, spotless, and like new. With meticulous attention to detail and a commitment to excellence, we provide professional, on-site cleaning without the hassle of removal, keeping your home or business looking its best.",
       ],
       // Standalone "Free Consult" button under this paragraph, matching live
       // (2026-08-08 fix pass — was missing entirely).
@@ -179,16 +163,28 @@ PAGES.push({
     crossLink("Check out our cleaning services:", CLEANING_LINKS),
     crossLink("Check out our products page:", PRODUCT_LINKS),
     {
-      // Brand logo strip — mirrors the live site's Hunter Douglas / Alta partner row
+      // Manufacturer logo strip. The live site rotates two groups here; the clone
+      // used to show a static 3 of the 7 brands. Group order matches the live
+      // carousel exactly (2026-08-08 fix pass, item 4). img_129/130/131 were pulled
+      // off the live site's second slide, which only mounts once the carousel
+      // advances — hence they were missing from the original crawl.
       type: "brandbar",
-      items: [
-        {
-          file: "img_014.png",
-          alt: "Hunter Douglas",
-          href: "/service-areas/window-treatments-laguna-beach/hunter-douglas-shades",
-        },
-        { file: "img_012.png", alt: "Alta Window Fashions" },
-        { file: "img_015.jpg", alt: "Window treatments logo" },
+      groups: [
+        [
+          { file: "img_012.png", alt: "Alta Window Fashions" },
+          { file: "img_013.png", alt: "Accent Awning Company" },
+          {
+            file: "img_014.png",
+            alt: "Hunter Douglas",
+            href: "/service-areas/window-treatments-laguna-beach/hunter-douglas-shades",
+          },
+          { file: "img_015.jpg", alt: "Fabricut" },
+        ],
+        [
+          { file: "img_129.jpg", alt: "Orion Ornamental Iron, Inc." },
+          { file: "img_130.png", alt: "Kirsch" },
+          { file: "img_131.png", alt: "Sunbrella" },
+        ],
       ],
     },
     {
@@ -210,9 +206,17 @@ PAGES.push({
     {
       type: "text",
       heading: "Who We Are",
+      // Pinned. This slot used to auto-assign from PHOTO_POOL and drew img_122, the
+      // Huntington Beach pier — a stock-looking travel photo next to the company
+      // story. A room showing the actual product belongs here, and pinning keeps it
+      // stable: the pool is hash-indexed, so adding or removing ANY file reshuffles
+      // every auto-assigned photo on the site.
+      image: "img_041.jpeg",
+      imageAlt: "Roller shades and floor-length drapery in a light-filled bedroom",
+      // Inline anchor targets copied from the live page (2026-08-08 fix pass, item 5).
       body: [
-        "Founded over 20 years ago, On-Site Custom Drapes & Blinds has become a leader in custom window treatments, motorized blinds, and professional drapery & blind cleaning. We proudly serve Orange County, Los Angeles, San Diego, and surrounding Southern California cities, offering high-quality window solutions for residential and commercial spaces.",
-        "As a Hunter Douglas Dealer and Certified Cleaner, we specialize in custom blinds, drapery, and motorized window treatments tailored to your style and needs.",
+        "Founded over 20 years ago, On-Site Custom Drapes & Blinds has become a leader in [custom window treatments](/custom-window-treatments-orange-county), [motorized blinds](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and professional [drapery & blind cleaning](/hunter-douglas-blind-cleaning). We proudly serve Orange County, Los Angeles, San Diego, and surrounding Southern California cities, offering high-quality window solutions for residential and commercial spaces.",
+        "As a [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) Dealer and [Certified Cleaner](/hunter-douglas-blind-cleaning), we specialize in custom blinds, [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), and [motorized window treatments](/hunter-douglas-shades-blinds/motorized-blinds-repairs) tailored to your style and needs.",
       ],
     },
     {
@@ -220,7 +224,7 @@ PAGES.push({
       heading: "Our Mission",
       items: [
         "Deliver high-quality craftsmanship and expert installation",
-        "Provide professional blind & drapery cleaning with our advanced Injection-Extraction method",
+        "Provide professional [blind](/hunter-douglas-blind-cleaning/orange-county) & [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county) with our advanced Injection-Extraction method",
         "Offer a seamless customer experience from consultation to installation",
       ],
     },
@@ -228,22 +232,22 @@ PAGES.push({
       type: "checklist",
       heading: "Why Choose Us",
       items: [
-        "Certified Hunter Douglas Dealer & Installer",
+        "Certified [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) Dealer & Installer",
         "20+ Years of Industry Expertise",
         "Eco-Friendly Cleaning Solutions for Drapes & Blinds",
-        "Serving Newport Beach, Laguna Beach, Irvine & More",
+        "Serving [Newport Beach](/service-areas/window-treatments-newport-beach), [Laguna Beach](/service-areas/window-treatments-laguna-beach), [Irvine](/service-areas/drapes-and-blinds-irvine) & More",
         "Shop-at-Home Convenience – We Bring the Store to You!",
       ],
     },
     {
       type: "text",
       heading: "Meet Our Team",
-      body: ["Our expert team is professionally trained in window treatment applications, motorization, and cleaning techniques. Whether you're purchasing new blinds & drapery or cleaning & maintaining your existing treatments, we ensure the highest level of precision and care.", "Every design solution is tailored to match your space, style, and budget. We prioritize exceptional customer service, competitive pricing, and on-time scheduling to make your experience seamless."],
+      body: ["Our expert team is professionally trained in [window treatment](/custom-window-treatments-orange-county) applications, [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and [cleaning techniques](/hunter-douglas-blind-cleaning). Whether you're purchasing new blinds & [custom drapery](/hunter-douglas-shades-blinds/drapery-top-treatments) or cleaning & maintaining your existing treatments, we ensure the highest level of precision and care.", "Every design solution is tailored to match your space, style, and budget. We prioritize exceptional customer service, competitive pricing, and on-time scheduling to make your experience seamless."],
     },
     {
       type: "linkgrid",
       heading: "One Stop Shop",
-      intro: "Let us bring our shop-at-home service to your door! Looking for custom blinds or drapery? Explore our Hunter Douglas Shades & Blinds. Need professional drapery or blind cleaning? Learn about our drapery cleaning services.",
+      intro: "Let us bring our shop-at-home service to your door! Looking for custom blinds or drapery? Explore our [Hunter Douglas Shades & Blinds](/hunter-douglas-shades-blinds). Need professional [blind cleaning](/hunter-douglas-blind-cleaning/orange-county) or [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county)? Ask for a [free quote](/contact-us).",
       items: [
         { label: "Hunter Douglas Shades & Blinds", href: "/hunter-douglas-shades-blinds" },
         { label: "Drapery & Blind Cleaning", href: "/hunter-douglas-blind-cleaning" },
@@ -262,8 +266,18 @@ PAGES.push({
   h1: "Our Work",
   sections: [
     {
+      // The live /our-work gallery, listed explicitly in live's own order (its photos
+      // carry alt text "1".."21"). Previously this was `count: 21`, i.e. the first 21
+      // entries of PHOTO_POOL — a different, arbitrary set that also pulled in the
+      // black Houzz badge and the logo-on-white share card as if they were projects.
       type: "gallery",
-      count: 21,
+      images: [
+        "img_039.jpg", "img_040.jpg", "img_038.png", "img_037.png", "img_036.png",
+        "img_034.png", "img_035.png", "img_033.png", "img_032.png", "img_030.png",
+        "img_031.png", "img_028.png", "img_029.png", "img_026.png", "img_027.png",
+        "img_025.png", "img_024.png", "img_023.png", "img_022.png", "img_021.png",
+        "img_020.png",
+      ],
     },
     {
       type: "cta",
@@ -330,8 +344,8 @@ PAGES.push({
     {
       type: "text",
       body: [
-        "At On-Site Custom Drapes & Blinds, we specialize in providing luxury custom window treatments for homes and businesses throughout Orange County. Whether you're in Huntington Beach, Newport Beach, Laguna Beach, or Irvine, our expert team brings your vision to life with elegant, made-to-measure drapery, blinds, and shades tailored to complement your space. From initial design consultation to professional installation, we guide you through every step to ensure your window treatments not only enhance your décor but also provide optimal light control, privacy, and energy efficiency.",
-        "Choose from premium materials, sophisticated fabrics, and the latest innovations like Hunter Douglas PowerView® Automation, giving you the ultimate convenience of motorized shades controlled from your phone or smart home system. Experience the difference of true customization and transform your windows into a statement of style and comfort.",
+        "At On-Site Custom Drapes & Blinds, we specialize in providing luxury [custom window treatments](/service-areas/window-treatments-newport-beach/custom-treatments) for homes and businesses throughout Orange County. Whether you're in [Huntington Beach](/service-areas/window-treatments-huntington-beach), [Newport Beach](/service-areas/window-treatments-newport-beach), [Laguna Beach](/service-areas/window-treatments-laguna-beach), or [Irvine](/service-areas/drapes-and-blinds-irvine), our expert team brings your vision to life with elegant, made-to-measure [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), blinds, and shades tailored to complement your space. From initial design consultation to professional installation, we guide you through every step to ensure your window treatments not only enhance your décor but also provide optimal light control, privacy, and energy efficiency.",
+        "Choose from premium materials, sophisticated fabrics, and the latest innovations like [Hunter Douglas](/service-areas/window-treatments-laguna-beach/hunter-douglas-shades) [PowerView® Automation](/service-areas/window-treatments-newport-beach/motorized-blinds), giving you the ultimate convenience of [motorized shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs) controlled from your phone or smart home system. Experience the difference of true customization and transform your windows into a statement of style and comfort.",
       ],
     },
     {
@@ -341,7 +355,7 @@ PAGES.push({
         "Tailored designs to match your home's architecture and interior style",
         "High-end materials, from rich velvets to eco-friendly natural fibers",
         "Expert craftsmanship with over 20 years of experience",
-        "Full-service options, including motorization, installation, and repairs",
+        "Full-service options, including [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), installation, and [repairs](/hunter-douglas-blind-cleaning/orange-county)",
         "Local expertise serving Orange County's most discerning homeowners",
       ],
     },
@@ -361,15 +375,15 @@ PAGES.push({
       // paragraph, bulleted category descriptions, and a CTA line.
       type: "text",
       body: [
-        "At On-Site Custom Drapes & Blinds, we offer a wide selection of luxury window treatments designed for style, functionality, and energy efficiency. Whether you're looking for Hunter Douglas Shades, motorized blinds, or classic wood blinds, our expert team will help you find the perfect solution.",
+        "At On-Site Custom Drapes & Blinds, we offer a wide selection of luxury [window treatments](/custom-window-treatments-orange-county) designed for style, functionality, and energy efficiency. Whether you're looking for [Hunter Douglas Shades](/service-areas/window-treatments-newport-beach/hunter-douglas), [motorized blinds](/hunter-douglas-shades-blinds/motorized-blinds-repairs), or classic [wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county), our expert team will help you find the perfect solution.",
         "Explore our premium window treatment options below:",
-        "👉 Roller & Roman Shades – Sleek, modern designs for light control & privacy.",
-        "👉 Sheer Shades & Silhouettes – Elegant light filtering with a soft, airy feel.",
-        "👉 Motorized Blinds & Smart Shades – Control your shades effortlessly with PowerView® Automation.",
-        "👉 Wood & Faux Wood Blinds – Timeless, natural beauty with durable materials.",
-        "👉 Drapery & Top Treatments – Custom fabrics & styles for a luxurious finish.",
-        "👉 Woven Woods & Bamboo Shades – Eco-friendly, textured designs inspired by nature.",
-        "📞 Need help choosing the perfect window treatments? Schedule a free consultation today!",
+        "👉 [Roller & Roman Shades](/hunter-douglas-shades-blinds/roller-roman-shades) – Sleek, modern designs for light control & privacy.",
+        "👉 [Sheer Shades & Silhouettes](/hunter-douglas-shades-blinds/sheer-shades) – Elegant light filtering with a soft, airy feel.",
+        "👉 [Motorized Blinds & Smart Shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs) – Control your shades effortlessly with PowerView® Automation.",
+        "👉 [Wood & Faux Wood Blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county) – Timeless, natural beauty with durable materials.",
+        "👉 [Drapery & Top Treatments](/hunter-douglas-shades-blinds/drapery-top-treatments) – Custom fabrics & styles for a luxurious finish.",
+        "👉 [Woven Woods & Bamboo Shades](/hunter-douglas-shades-blinds/woven-wood-bamboo) – Eco-friendly, textured designs inspired by nature.",
+        "📞 Need help choosing the perfect window treatments? Schedule a [free consultation](/contact-us) today!",
       ],
     },
     {
@@ -399,8 +413,8 @@ PAGES.push({
     {
       type: "text",
       body: [
-        "When it comes time to decide whether you want your custom window treatments with a motorized operating system, convenience is a key consideration – but it is not the only one. Enhanced safety is another benefit. As is greater energy efficiency.",
-        "Virtually every type of product can be outfitted with a motorized system – we offer the most innovative technology in the industry. The system appropriate for your custom window coverings depends mostly on the type of product you purchase. Some systems raise and lower window treatments and adjust slats, vanes and louvers, while others move the window covering from side to side, rotating vanes and louvers.",
+        "When it comes time to decide whether you want your [custom window treatments](/custom-window-treatments-orange-county) with a motorized operating system, convenience is a key consideration – but it is not the only one. Enhanced safety is another benefit. As is greater energy efficiency.",
+        "Virtually every type of product can be outfitted with a motorized system – we offer the most innovative technology in the industry. The system appropriate for your custom window coverings depends mostly on the type of product you purchase. Some systems raise and lower [shades](/hunter-douglas-shades-blinds/roller-roman-shades) and adjust slats, vanes and louvers, while others move the window covering from side to side, rotating vanes and louvers. If a motor or remote ever stops responding, we also handle [motorization repairs](/hunter-douglas-blind-cleaning/orange-county).",
       ],
     },
     {
@@ -423,7 +437,7 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      body: ["Sheer shades are innovative products that offer the privacy benefits of a window shade with the softening view of a sheer. Our sheer shades delicately filter incoming sunshine to create an inviting room ambiance. They also keep out harmful UV rays that can damage your furnishings and artwork."],
+      body: ["Sheer shades are innovative products that offer the privacy benefits of a window shade with the softening view of a sheer. Our sheer shades delicately filter incoming sunshine to create an inviting room ambiance. They also keep out harmful UV rays that can damage your furnishings and artwork. Pair them with [custom drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), add [PowerView® motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and keep them looking new with our [blind cleaning service](/hunter-douglas-blind-cleaning/orange-county)."],
     },
     {
       type: "text",
@@ -457,7 +471,7 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      body: ["Genuine Woods are made from Oak, Cherry and Pine and offer your home natural warmth. Complementing the styling of any room, these premium hardwood blinds feature an exclusive finish that provides longstanding protection against everyday wear."],
+      body: ["Genuine Woods are made from Oak, Cherry and Pine and offer your home natural warmth. Complementing the styling of any room, these premium hardwood blinds feature an exclusive finish that provides longstanding protection against everyday wear. For a softer, more textured look, see our [woven woods & bamboo shades](/hunter-douglas-shades-blinds/woven-wood-bamboo); for effortless operation, ask about [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs). We also [clean and restore](/hunter-douglas-blind-cleaning/orange-county) wood blinds on-site."],
     },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
   ],
@@ -472,7 +486,7 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      body: ["Full length drapery panels add insulation, texture, color and dimension. The variety of styles available is defined mainly by the type of header the panel has."],
+      body: ["Full length drapery panels add insulation, texture, color and dimension. The variety of styles available is defined mainly by the type of header the panel has. Drapery layers beautifully over [sheer shades](/hunter-douglas-shades-blinds/sheer-shades) or [roller and Roman shades](/hunter-douglas-shades-blinds/roller-roman-shades), and we keep existing panels fresh with on-site [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county)."],
     },
     {
       type: "text",
@@ -510,7 +524,7 @@ PAGES.push({
     {
       type: "text",
       heading: "Roller — Solar Shades",
-      body: ["Roller shades exude contemporary sophistication with their clean lines and simple design. They offer extensive customization with numerous colors and fabrics. These shades are user-friendly, cost-effective, and provide various light-filtering capabilities. Motorization options allow remote control operation. Decorative enhancements like valances and cornices enable personalized window styling."],
+      body: ["Roller shades exude contemporary sophistication with their clean lines and simple design. They offer extensive customization with numerous colors and fabrics. These shades are user-friendly, cost-effective, and provide various light-filtering capabilities. [Motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs) options allow remote control operation. Decorative enhancements like valances and [top treatments](/hunter-douglas-shades-blinds/drapery-top-treatments) enable personalized window styling."],
     },
     {
       type: "text",
@@ -543,7 +557,7 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      body: ["With unmatched style, selection and craftsmanship, Woven Wood Shades are perfect for today's casual lifestyle. Hand woven from all natural materials, these shades are uniquely textured and incredibly versatile. With the newest colors and weaves, you can bring the latest fashion to any room."],
+      body: ["With unmatched style, selection and craftsmanship, Woven Wood Shades are perfect for today's casual lifestyle. Hand woven from all natural materials, these shades are uniquely textured and incredibly versatile. With the newest colors and weaves, you can bring the latest fashion to any room. Prefer a crisper, more traditional look? Compare them with our [wood & faux wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county), or add [drapery panels](/hunter-douglas-shades-blinds/drapery-top-treatments) for extra softness."],
     },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
   ],
@@ -556,11 +570,39 @@ PAGES.push({
   description: "Professional blind and drapery cleaning services in Orange County using the injection/extraction method. 20+ years of experience.",
   nav: "Cleaning",
   h1: "Orange County's Trusted Drapery & Blind Cleaning Experts",
+  // Pinned banner. Without this the hash landed on img_018 — the logo-on-white share
+  // card — which rendered as a stretched grey logo with the white <h1> on top of it.
+  heroImage: "img_117.jpg",
   sections: [
+    {
+      // Two large landing cards directly under the banner, before any body copy —
+      // matching live's layout for this page (2026-08-08 fix pass, item 2). These are
+      // the page's primary route into the two cleaning services.
+      type: "cardlinks",
+      items: [
+        {
+          label: "Blind Cleaning",
+          href: "/hunter-douglas-blind-cleaning/orange-county",
+          file: "img_114.jpg",
+          alt: "Sheer shades and vertical blinds in a sunlit living room",
+          blurb: "Hunter Douglas & all brands, cleaned on-site by injection/extraction.",
+        },
+        {
+          label: "Drapery Cleaning",
+          href: "/hunter-douglas-blind-cleaning/drapery-orange-county",
+          file: "img_115.jpg",
+          alt: "Floor-length white drapery panels in a bedroom",
+          blurb: "Eco-friendly solvents, no shrinkage, no downtime.",
+        },
+      ],
+    },
     {
       type: "text",
       heading: "Professional Blind & Drapery Cleaning Services in Orange County",
-      body: ["At On-Site Custom Drapes & Blinds, we specialize in professional blind and drapery cleaning services in Orange County, ensuring your window treatments stay pristine, dust-free, and well-maintained. We serve residents in Newport Beach, Laguna Beach, Irvine, and surrounding areas with both on-site and in-shop cleaning options."],
+      body: [
+        "At On-Site Custom Drapes & Blinds, we specialize in professional blind and [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county) services in Orange County, ensuring your window treatments stay pristine, dust-free, and well-maintained. Whether you need [Hunter Douglas blind cleaning](/hunter-douglas-blind-cleaning/orange-county) or custom [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county), our expert team uses safe, fabric-friendly methods to protect your investment and restore their beauty.",
+        "We serve residents in [Newport Beach](/service-areas/window-treatments-newport-beach), [Laguna Beach](/service-areas/window-treatments-laguna-beach), [Irvine](/service-areas/drapes-and-blinds-irvine), and surrounding areas with both on-site and in-shop cleaning options.",
+      ],
     },
     {
       type: "checklist",
@@ -569,15 +611,15 @@ PAGES.push({
         "Fabric-safe dry and wet cleaning methods",
         "On-site cleaning without removal",
         "Take-down and re-hanging services for deep cleaning",
-        "Cleaning for Sheer Shades & Silhouettes, Roman Shades, and more",
+        "Cleaning for [Sheer Shades & Silhouettes](/hunter-douglas-shades-blinds/sheer-shades), [Roman Shades](/hunter-douglas-shades-blinds/roller-roman-shades), and more",
       ],
     },
     {
       type: "checklist",
       heading: "Why Choose On-Site Custom Drapes & Blinds?",
       items: [
-        "20+ years of experience in Orange County blind & drapery cleaning",
-        "Certified Hunter Douglas blind cleaning specialists",
+        "20+ years of experience in Orange County blind & [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county)",
+        "Certified [Hunter Douglas blind cleaning](/hunter-douglas-blind-cleaning/orange-county) specialists",
         "Eco-friendly cleaning methods safe for fabrics and the environment",
         "Convenient on-site cleaning with no downtime",
       ],
@@ -603,31 +645,36 @@ PAGES.push({
   sections: [
     {
       type: "text",
+      // Live has no image in this slot — full-width text. The clone used to auto-fill
+      // it from PHOTO_POOL and landed on img_016, the black Houzz badge, which read as
+      // a broken graphic mid-page. img_016/017/018 are now in BRAND_FILES so they can
+      // never reach a photo slot again; noImage keeps this page matching live.
+      noImage: true,
       body: [
-        "For over 20 years, On-Site Custom Drapes & Blinds has been the trusted expert for Hunter Douglas blind cleaning and all other window treatments in Orange County. We understand the investment you've made in choosing the perfect blinds for your home, and we're here to keep them looking their best.",
+        "For over 20 years, On-Site Custom Drapes & Blinds has been the trusted expert for [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) blind cleaning and all other [window treatments](/custom-window-treatments-orange-county) in Orange County. We understand the investment you've made in choosing the perfect blinds for your home, and we're here to keep them looking their best.",
         "Our cleaning process begins with a free, no-obligation, on-site consultation to assess the condition of your Hunter Douglas blinds or other window treatments. We'll provide a comprehensive cost estimate based on a thorough pre-inspection.",
         "We use the injection/extraction method for cleaning, ensuring the deepest clean possible. Our method is gentle yet effective, protecting even the most delicate window treatments. For treatments that require special care, we provide hand cleaning to prevent any damage.",
-        "We offer on-site cleaning for all window treatments, including Hunter Douglas blinds, so there's no need to remove your treatments from the window. For customers undergoing home renovations, we provide a take down, clean, store, and re-hang service to ensure your blinds stay in top condition.",
-        "As Certified Fabricare Specialists, we are proud to be highly recommended by Hunter Douglas for the cleaning of their blinds.",
+        "We offer on-site cleaning for all window treatments, including Hunter Douglas blinds, so there's no need to remove your treatments from the window. For customers undergoing home renovations, we provide a take down, clean, store, and re-hang service to ensure your blinds stay in top condition. We also clean [custom drapery](/hunter-douglas-blind-cleaning/drapery-orange-county) on the same visit.",
+        "As Certified Fabricare Specialists, we are proud to be highly recommended by Hunter Douglas for the cleaning of their blinds. We serve [Newport Beach](/service-areas/window-treatments-newport-beach), [Laguna Beach](/service-areas/window-treatments-laguna-beach), [Huntington Beach](/service-areas/window-treatments-huntington-beach), [Irvine](/service-areas/drapes-and-blinds-irvine) and the surrounding communities.",
       ],
     },
     {
       type: "text",
       heading: "Drapery, Blinds & Motorization Repair",
-      body: ["At On-Site Specialists, we provide professional repair and parts replacement for all types of drapery, blinds, and motorized window treatments. Whether it's broken cords, malfunctioning motors, or damaged hardware, our skilled technicians can restore your window treatments to perfect working condition."],
+      body: ["At On-Site Specialists, we provide professional repair and parts replacement for all types of [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), blinds, and [motorized window treatments](/hunter-douglas-shades-blinds/motorized-blinds-repairs). Whether it's broken cords, malfunctioning motors, or damaged hardware, our skilled technicians can restore your window treatments to perfect working condition."],
     },
     {
       type: "checklist",
       items: [
         "Blind & Drapery Repairs – Restringing, re-cording, and hardware replacement",
-        "Motorization Repairs – Troubleshooting and fixing motorized systems, including PowerView® Automation",
+        "[Motorization Repairs](/hunter-douglas-shades-blinds/motorized-blinds-repairs) – Troubleshooting and fixing motorized systems, including PowerView® Automation",
         "Parts Replacement – Tracks, brackets, wands, remotes, and more",
       ],
     },
     {
       type: "checklist",
       heading: "We Offer Cleaning Options For All Types",
-      items: ["Silhouettes and Luminettes", "Cellular Shades", "Honeycomb and Duette shades", "Roller and Roman shades", "Horizontal and vertical blinds", "All fabric blinds or shades"],
+      items: ["[Silhouettes and Luminettes](/hunter-douglas-shades-blinds/sheer-shades)", "Cellular Shades", "Honeycomb and Duette shades", "[Roller and Roman shades](/hunter-douglas-shades-blinds/roller-roman-shades)", "Horizontal and vertical blinds", "[Wood and faux wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county)", "All fabric blinds or shades"],
     },
     { type: "cta", heading: "Call today for our Spring Cleaning Specials!", body: [BUSINESS.phone] },
   ],
@@ -643,9 +690,9 @@ PAGES.push({
     {
       type: "text",
       body: [
-        "On-Site Custom Drapes & Blinds offers the finest drapery cleaning services for both residential and commercial properties in Orange County. With over 20 years of experience, we are among the most trusted and experienced drapery cleaners in the region. Our pricing is competitive, and we ensure a prompt turn-around time for all drapery cleaning services. We only use eco-friendly solvents to clean your window treatments, so your home and business remain safe and environmentally conscious.",
+        "On-Site Custom Drapes & Blinds offers the finest drapery cleaning services for both residential and commercial properties in Orange County, including [Newport Beach](/service-areas/window-treatments-newport-beach), [Laguna Beach](/service-areas/window-treatments-laguna-beach) and [Irvine](/service-areas/drapes-and-blinds-irvine). With over 20 years of experience, we are among the most trusted and experienced drapery cleaners in the region. Our pricing is competitive, and we ensure a prompt turn-around time for all drapery cleaning services. We only use eco-friendly solvents to clean your window treatments, so your home and business remain safe and environmentally conscious.",
         "Our cleaning process starts with a free, no-obligation, on-site consultation to assess the condition of your drapes and provide a cost estimate. We use the injection/extraction method, which allows us to clean your drapes on-site, preventing shrinkage and damage while ensuring no downtime. Delicate drapery treatments that could otherwise be damaged by ordinary cleaning services are carefully hand-treated by our experienced technicians. Our team is fully certified, and we are bonded and insured, ensuring peace of mind for every customer.",
-        "We also provide a take-down, storage, and re-hanging service, ideal for homeowners undergoing renovations or requiring temporary storage.",
+        "We also provide a take-down, storage, and re-hanging service, ideal for homeowners undergoing renovations or requiring temporary storage. Cleaning blinds at the same time? See our [blind cleaning service](/hunter-douglas-blind-cleaning/orange-county). Replacing panels altogether? Browse our [drapery & top treatments](/hunter-douglas-shades-blinds/drapery-top-treatments).",
       ],
     },
     {
@@ -667,16 +714,21 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      body: ["At On-Site Custom Drapes & Blinds, we proudly serve homeowners across Orange County, San Diego, and Los Angeles with custom window treatments, including blinds, shades, shutters, and drapery. We offer motorized smart shades, plantation shutters, and elegant drapery with expert design consultation and professional installation services. We provide custom window treatment services in many cities across Southern California — if you don't see your specific city listed, contact us!"],
+      body: [
+        "At On-Site Custom Drapes & Blinds, we proudly serve homeowners across Orange County, San Diego, and Los Angeles with [custom window treatments](/custom-window-treatments-orange-county), including blinds, shades, shutters, and [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments). We offer [motorized smart shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs), plantation shutters, and elegant drapery with expert design consultation and professional installation services.",
+        "We provide [custom window treatment](/hunter-douglas-shades-blinds) services in many cities across Southern California, including [Newport Beach](/service-areas/window-treatments-newport-beach), [Irvine](/service-areas/drapes-and-blinds-irvine), [Laguna Beach](/service-areas/window-treatments-laguna-beach) and [Huntington Beach](/service-areas/window-treatments-huntington-beach) — if you don't see your specific city listed, [contact us](/contact-us)!",
+      ],
     },
     {
+      // Photo cards, matching live's four large city cards (2026-08-08 fix pass,
+      // item 8). Photos are the live site's own city images.
       type: "linkgrid",
-      heading: "Featured Service Areas",
+      heading: "Our Service Areas",
       items: [
-        { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
-        { label: "Huntington Beach", href: "/service-areas/window-treatments-huntington-beach" },
-        { label: "Laguna Beach", href: "/service-areas/window-treatments-laguna-beach" },
-        { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine" },
+        { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach", file: "img_124.jpg", alt: "Newport Beach harbour" },
+        { label: "Huntington Beach", href: "/service-areas/window-treatments-huntington-beach", file: "img_122.jpg", alt: "Huntington Beach pier" },
+        { label: "Laguna Beach", href: "/service-areas/window-treatments-laguna-beach", file: "img_121.jpg", alt: "Laguna Beach coastline" },
+        { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine", file: "img_123.jpg", alt: "Irvine Spectrum" },
       ],
     },
     crossLink("Check out our products page:", PRODUCT_LINKS),
@@ -714,7 +766,7 @@ function cityHub(city, path, intro, neighborhoods, subs) {
 cityHub(
   "Newport Beach",
   "/service-areas/window-treatments-newport-beach",
-  "At On-Site Custom Drapes & Blinds, we specialize in premium window treatments in Newport Beach, offering custom blinds, shades, shutters, and motorized smart shades to complement your home's style. Whether you're looking for light-filtering shades, energy-efficient blinds, or luxury window coverings, our team provides expert design consultation, top-quality products, and professional installation. We proudly serve homeowners throughout Newport Beach, Balboa Island, Corona Del Mar, Crystal Cove, and the surrounding coastal communities.",
+  "At On-Site Custom Drapes & Blinds, we specialize in premium [window treatments](/service-areas/window-treatments-newport-beach/custom-treatments) in Newport Beach, offering custom blinds, shades, shutters, and [motorized smart shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs) to complement your home's style. Whether you're looking for light-filtering [sheer shades](/hunter-douglas-shades-blinds/sheer-shades), energy-efficient blinds, or luxury [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) window coverings, our team provides expert design consultation, top-quality products, and professional installation. We proudly serve homeowners throughout Newport Beach, Balboa Island, Corona Del Mar, Crystal Cove, and the surrounding coastal communities, and we also handle [blind & drapery cleaning](/hunter-douglas-blind-cleaning) here.",
   ["Corona Del Mar", "Balboa Island & Balboa Peninsula", "Crystal Cove & Newport Coast", "East Bluff & Lido Isle", "Back Bay & Mariners Mile"],
   [
     { label: "Custom Window Treatments", href: "/service-areas/window-treatments-newport-beach/custom-treatments" },
@@ -727,7 +779,7 @@ cityHub(
 cityHub(
   "Huntington Beach",
   "/service-areas/window-treatments-huntington-beach",
-  "At On-Site Custom Drapes & Blinds, we offer custom window treatments in Huntington Beach, providing high-quality blinds, shades, shutters, and motorized smart shades tailored to enhance your home's aesthetic and functionality. We serve homeowners throughout Huntington Beach, Sunset Beach, Bolsa Chica, Downtown Huntington Beach, and surrounding areas.",
+  "At On-Site Custom Drapes & Blinds, we offer [custom window treatments](/service-areas/window-treatments-huntington-beach/shades-blinds) in Huntington Beach, providing high-quality blinds, shades, shutters, and [motorized smart shades](/service-areas/window-treatments-huntington-beach/motorized-smart-shades) tailored to enhance your home's aesthetic and functionality. Coastal homes take a beating from salt air and sun, so we also offer on-site [blind & drapery cleaning](/hunter-douglas-blind-cleaning) alongside new [Hunter Douglas](/service-areas/window-treatments-huntington-beach/hunter-douglas-treatments) installations. We serve homeowners throughout Huntington Beach, Sunset Beach, Bolsa Chica, Downtown Huntington Beach, and surrounding areas.",
   ["Sunset Beach & Bolsa Chica", "Downtown Huntington Beach & Pacific City", "Huntington Harbour & Seacliff", "Goldenwest & Edwards Hill"],
   [
     { label: "Custom Window Treatments", href: "/service-areas/window-treatments-huntington-beach/blinds-shades" },
@@ -740,7 +792,7 @@ cityHub(
 cityHub(
   "Laguna Beach",
   "/service-areas/window-treatments-laguna-beach",
-  "At On-Site Custom Drapes & Blinds, we provide premium window treatments in Laguna Beach, including custom blinds, shades, shutters, and motorized smart shades. Whether you're updating your coastal home with elegant window coverings or need energy-efficient shades, our expert team offers personalized consultations, high-quality products, and professional installation. We proudly serve homeowners across Laguna Beach, Emerald Bay, Three Arch Bay, Victoria Beach, and surrounding areas.",
+  "At On-Site Custom Drapes & Blinds, we provide premium [window treatments](/service-areas/window-treatments-laguna-beach/custom-blinds-drapes) in Laguna Beach, including custom blinds, shades, shutters, and [motorized smart shades](/service-areas/window-treatments-laguna-beach/blinds-motorized). Whether you're updating your coastal home with elegant [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments) or need energy-efficient [Hunter Douglas](/service-areas/window-treatments-laguna-beach/hunter-douglas-shades) shades, our expert team offers personalized consultations, high-quality products, and professional installation. We proudly serve homeowners across Laguna Beach, Emerald Bay, Three Arch Bay, Victoria Beach, and surrounding areas, and keep existing treatments looking new with our [cleaning service](/hunter-douglas-blind-cleaning).",
   ["Crystal Cove & Emerald Bay", "Three Arch Bay & Bluebird Canyon", "Top of the World & Victoria Beach", "South Laguna & Laguna Canyon"],
   [
     { label: "Custom Window Treatments", href: "/service-areas/window-treatments-laguna-beach/custom-blinds-drapes" },
@@ -753,7 +805,7 @@ cityHub(
 cityHub(
   "Irvine",
   "/service-areas/drapes-and-blinds-irvine",
-  "At On-Site Custom Drapes & Blinds, we offer custom window treatments in Irvine, providing high-quality blinds, shades, shutters, and motorized smart shades tailored to enhance your home. Whether you're looking for energy-efficient shades, luxury window coverings, or smart home-integrated blinds, our team delivers expert design consultations, top-tier products, and professional installation. We proudly serve homeowners throughout Irvine, Northwood, Turtle Rock, University Park, Woodbridge, and surrounding communities.",
+  "At On-Site Custom Drapes & Blinds, we offer [custom window treatments](/service-areas/drapes-and-blinds-irvine/custom-shades) in Irvine, providing high-quality blinds, shades, shutters, and [motorized smart shades](/service-areas/drapes-and-blinds-irvine/smart-shades) tailored to enhance your home. Whether you're looking for energy-efficient [roller and Roman shades](/hunter-douglas-shades-blinds/roller-roman-shades), luxury [Hunter Douglas](/service-areas/drapes-and-blinds-irvine/hunter-douglas-blinds) window coverings, or smart home-integrated blinds, our team delivers expert design consultations, top-tier products, and professional installation. We proudly serve homeowners throughout Irvine, Northwood, Turtle Rock, University Park, Woodbridge, and surrounding communities, and offer on-site [blind & drapery cleaning](/hunter-douglas-blind-cleaning) across the city.",
   ["Northwood & Northpark", "Turtle Rock & University Park", "Woodbridge & Westpark", "Portola Springs & Quail Hill"],
   [
     { label: "Custom Window Treatments", href: "/service-areas/drapes-and-blinds-irvine/custom-window-treatments" },
@@ -763,8 +815,66 @@ cityHub(
   ]
 );
 
+// ---- inline internal linking for the 16 city x category detail pages ----
+// These pages are generated from one template, so their in-paragraph links are
+// generated too rather than hand-written 16 times. linkify() rewrites the FIRST
+// occurrence of each known phrase into the [text](/path) form that build.js's rich()
+// turns into an anchor. Longest phrases are tried first so "motorized smart shades"
+// wins over "shades", and each phrase is linked once per page (the shared `used` set)
+// so a page never turns into a wall of blue.
+const CITY_HUBS = {
+  "Newport Beach": "/service-areas/window-treatments-newport-beach",
+  "Huntington Beach": "/service-areas/window-treatments-huntington-beach",
+  "Laguna Beach": "/service-areas/window-treatments-laguna-beach",
+  Irvine: "/service-areas/drapes-and-blinds-irvine",
+};
+const PRODUCT_TERMS = {
+  "motorized smart shades": "/hunter-douglas-shades-blinds/motorized-blinds-repairs",
+  "motorized window treatments": "/hunter-douglas-shades-blinds/motorized-blinds-repairs",
+  "motorized blinds": "/hunter-douglas-shades-blinds/motorized-blinds-repairs",
+  "PowerView® Automation": "/hunter-douglas-shades-blinds/motorized-blinds-repairs",
+  "woven wood shades": "/hunter-douglas-shades-blinds/woven-wood-bamboo",
+  "faux wood blinds": "/hunter-douglas-shades-blinds/wood-blinds-orange-county",
+  "wood blinds": "/hunter-douglas-shades-blinds/wood-blinds-orange-county",
+  "Roman shades": "/hunter-douglas-shades-blinds/roller-roman-shades",
+  "roller shades": "/hunter-douglas-shades-blinds/roller-roman-shades",
+  "Silhouette®": "/hunter-douglas-shades-blinds/sheer-shades",
+  "custom window treatments": "/custom-window-treatments-orange-county",
+  "window coverings": "/custom-window-treatments-orange-county",
+  "smart shades": "/hunter-douglas-shades-blinds/motorized-blinds-repairs",
+  "custom drapery": "/hunter-douglas-shades-blinds/drapery-top-treatments",
+  "drapery cleaning": "/hunter-douglas-blind-cleaning/drapery-orange-county",
+  "blind cleaning": "/hunter-douglas-blind-cleaning/orange-county",
+  drapery: "/hunter-douglas-shades-blinds/drapery-top-treatments",
+  "Hunter Douglas": "/hunter-douglas-shades-blinds",
+};
+
+function escapeRe(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// One linker per page: shares `used`, and refuses to link a page to itself.
+function makeLinker(ownPath) {
+  const map = {};
+  for (const [phrase, href] of Object.entries({ ...PRODUCT_TERMS, ...CITY_HUBS })) {
+    if (href !== ownPath) map[phrase] = href;
+  }
+  const phrases = Object.keys(map).sort((a, b) => b.length - a.length);
+  const re = new RegExp("(" + phrases.map(escapeRe).join("|") + ")", "g");
+  const used = new Set();
+  return function link(text) {
+    if (!text) return text;
+    return text.replace(re, (m) => {
+      if (used.has(m)) return m;
+      used.add(m);
+      return `[${m}](${map[m]})`;
+    });
+  };
+}
+
 // City x category detail pages
 function cityDetail(city, path, kind, title, intro, whyItems, selectionIntro, selectionItems, neighborhoods) {
+  const link = makeLinker(path);
   PAGES.push({
     path,
     title,
@@ -772,9 +882,16 @@ function cityDetail(city, path, kind, title, intro, whyItems, selectionIntro, se
     nav: "Service Areas",
     h1: title.split(" | ")[0],
     sections: [
-      { type: "text", body: [intro] },
-      { type: "checklist", heading: `Why Choose ${kind}?`, items: whyItems },
-      { type: "checklist", heading: `Our Selection of ${kind} in ${city}`, intro: selectionIntro, items: selectionItems },
+      { type: "text", body: [link(intro)] },
+      { type: "checklist", heading: `Why Choose ${kind}?`, items: whyItems.map(link) },
+      {
+        type: "checklist",
+        heading: `Our Selection of ${kind} in ${city}`,
+        intro: link(selectionIntro),
+        // Three of these pages pass an empty list; build.js drops the whole section
+        // rather than rendering a heading over an empty box.
+        items: selectionItems.map(link),
+      },
       { type: "pins", heading: `Proudly Serving ${city} & Nearby Areas`, items: neighborhoods },
       { type: "cta", heading: `Schedule Your Free Consultation for ${kind} in ${city}`, body: [`Call ${BUSINESS.phone} or Request a Quote Online!`] },
     ],
@@ -1027,5 +1144,20 @@ PAGES.push({
     { type: "cta", heading: "Looking to update your window treatments?", body: ["Contact us today to explore the latest Hunter Douglas collections and custom drapery solutions!"] },
   ],
 });
+
+// ---- inline internal linking pass over the blog posts ----
+// The four posts are editorial copy with no live-site anchors to copy, and they are
+// dense with product and city terms, so they get the same auto-linker the city detail
+// pages use: first occurrence of each known phrase only, once per page, never a link
+// to the page it is already on. Product/service/city pages were linked by hand above,
+// against the live site's own anchor placement, so they are deliberately skipped here.
+for (const page of PAGES) {
+  if (!page.path.startsWith("/post/")) continue;
+  const link = makeLinker(page.path);
+  for (const section of page.sections || []) {
+    if (section.type === "text" && section.body) section.body = section.body.map(link);
+    if (section.type === "checklist" && section.items) section.items = section.items.map(link);
+  }
+}
 
 module.exports = { BUSINESS, NAV, FOOTER_LINKS, PAGES };

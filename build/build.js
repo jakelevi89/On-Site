@@ -36,17 +36,27 @@ const FAVICON_FILE = "favicon-icon.png";
 // logos, icons, and tiny thumbnails out of the random photo pools. Regenerate with
 // PIL if images change (see README).
 const META = JSON.parse(fs.readFileSync(path.join(__dirname, "image-meta.json"), "utf8"));
-// Known brand/logo/icon files (identified against the live site) — never usable as photos
+// Known brand/logo/icon files (identified against the live site) — never usable as photos.
+// Getting this list wrong is visible: anything omitted here that isn't photography
+// leaks into PHOTO_POOL and can land in a body slot or the Our Work gallery (that is
+// exactly how the black Houzz badge ended up mid-page on the Blind Cleaning page and
+// how the logo-on-white OG card became the Cleaning banner — 2026-08-08 fix pass).
 const BRAND_FILES = new Set([
   LOGO_FILE,
   "img_003.png", // Hunter Douglas vertical badge
   "img_005.png", // wide partner banner
   "img_006.png", // social icon
   "img_007.png", // social icon
-  "img_012.png", // Alta logo
-  "img_013.png", // logo
+  "img_012.png", // Alta Window Fashions logo
+  "img_013.png", // Accent Awning Company logo
   "img_014.png", // Hunter Douglas horizontal logo
-  "img_015.jpg", // window treatments logo
+  "img_015.jpg", // Fabricut logo
+  "img_016.jpg", // Houzz badge (black square) — NOT a photo
+  "img_017.jpg", // Yelp badge — NOT a photo
+  "img_018.jpg", // On-Site logo on white (the site's OG/share card) — NOT a photo
+  "img_129.jpg", // Orion Ornamental Iron logo
+  "img_130.png", // Kirsch logo
+  "img_131.png", // Sunbrella logo
 ]);
 function dims(f) {
   return META[f] || [0, 0];
@@ -91,8 +101,16 @@ function hashCode(str) {
 const ICONS = {
   facebook: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>`,
   instagram: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.2-2.3.5-.6.3-1.2.6-1.7 1.2-.6.5-.9 1.1-1.2 1.7-.2.6-.4 1.4-.5 2.3C2.1 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 1 .2 1.7.5 2.3.3.6.6 1.2 1.2 1.7.5.6 1.1.9 1.7 1.2.6.2 1.4.4 2.3.5C8.9 21.9 9.3 22 12 22s3.1 0 4.1-.1c1-.1 1.7-.2 2.3-.5.6-.3 1.2-.6 1.7-1.2.6-.5.9-1.1 1.2-1.7.2-.6.4-1.4.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.2-1.7-.5-2.3a4.6 4.6 0 0 0-1.2-1.7A4.6 4.6 0 0 0 18.4 2.6c-.6-.2-1.4-.4-2.3-.5C15.1 2 14.7 2 12 2Zm0 1.8c2.6 0 3 0 4 .1.9 0 1.4.2 1.8.3.4.2.7.4 1 .7.3.3.5.6.7 1 .2.4.3.9.3 1.8.1 1 .1 1.4.1 4s0 3-.1 4c0 .9-.2 1.4-.3 1.8-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.4.2-.9.3-1.8.3-1 .1-1.4.1-4 .1s-3 0-4-.1c-.9 0-1.4-.2-1.8-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.2-.4-.3-.9-.3-1.8-.1-1-.1-1.4-.1-4s0-3 .1-4c0-.9.2-1.4.3-1.8.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.4-.2.9-.3 1.8-.3 1-.1 1.4-.1 4-.1Zm0 3a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4Zm0 8.6a3.4 3.4 0 1 1 0-6.8 3.4 3.4 0 0 1 0 6.8Zm5.4-8.8a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/></svg>`,
-  houzz: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 9h3v11h5v-6h4v6h5V9h3L12 2Z"/></svg>`,
-  yelp: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.4 6.5L21 9l-5 4.3L17.5 20 12 16.3 6.5 20 8 13.3 3 9l6.6-.5L12 2Z"/></svg>`,
+  // Houzz: the real wordmark's "h" monogram — two offset parallelograms with the
+  // notched centre. The old generic house glyph and star were placeholders that read
+  // as "home" and "favourite", not as Houzz and Yelp (2026-08-08 fix pass).
+  // Houzz "h" monogram: two offset vertical parallelograms, each with a triangular
+  // bite out of its inner edge. Traced off the real mark (assets/images/img_016.jpg)
+  // rather than drawn from memory — the previous glyph here was a generic house
+  // outline, which read as "home", not as Houzz.
+  houzz: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.9 0 11.9 8.5 5.3 12.3 11.9 16.4 5.1 20.3 5.1 4.2Z M19 4.2 19 20.3 12.1 24 12.1 16.4 18.5 12.3 12.1 8.7Z"/></svg>`,
+  // Yelp: the burst mark — the tall left flame plus the four right-hand rays.
+  yelp: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 11.4 4.9 8.6c-.5-.2-.7-.8-.5-1.4.1-.2.2-.4.4-.5C6 5.4 8 4.4 10 4c.7-.1 1.3.3 1.4 1v.2l.2 6c0 .5-.3.9-.8 1a1 1 0 0 1-.2 0Zm.3 2.9c.2-.4 0-1-.4-1.2h-.2l-5 2.2c-.6.2-.8.9-.6 1.4l.3.4c1.1 1.2 2.5 2.2 4 2.8.6.2 1.3-.1 1.5-.7v-.3l.4-4.6Zm2.6-.4c-.4-.3-1-.2-1.3.2v.2l-1.7 4.3c-.2.6.1 1.3.7 1.5h.4c1.7.1 3.4-.2 4.9-.9.6-.3.8-1 .5-1.5l-.2-.2-3.3-3.6Zm1.4-2.5c-.4.1-.7.6-.6 1 0 .2.1.4.3.5l3.4 3.1c.4.4 1.1.4 1.5 0l.2-.3c.9-1.4 1.4-3 1.5-4.7 0-.6-.5-1.2-1.1-1.2h-.3l-4.9 1.6Zm-.4-2.5c.2.4.7.6 1.2.5l.2-.1 3.9-3.2c.5-.4.5-1.1.1-1.6l-.3-.2A9.7 9.7 0 0 0 15.4 3c-.6-.1-1.2.4-1.3 1v.3l.4 4.6Z"/></svg>`,
 };
 
 function esc(s) {
@@ -102,6 +120,33 @@ function esc(s) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+// Body copy in data.js is plain text, escaped like everything else — EXCEPT for one
+// markdown-style form: [anchor text](/internal/path). rich() escapes first and only
+// then turns that bracket form into a real <a>, so nothing an author types can inject
+// markup; only this one deliberate syntax produces a tag.
+//
+// This exists for the sitewide in-paragraph internal linking pass (2026-08-08): the
+// live Wix site embeds links inside sentences on nearly every page, and those inline
+// anchors are the internal-linking signal that the bottom "Check out our..." blocks
+// alone don't provide. Root-relative hrefs get the BASE_PATH prefix; anything else
+// (tel:, mailto:, https:) is passed through untouched.
+function rich(s) {
+  return esc(s).replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_m, label, href) {
+    const url = href.startsWith("/") ? u(href) : href;
+    return `<a href="${url}">${label}</a>`;
+  });
+}
+
+// Sections that are just a heading plus a list render an empty box when the list is
+// empty — a heading with visible nothing under it. Three service-area detail pages hit
+// this (they have no "Our Selection of..." items). Drop the whole section instead.
+function isEmptySection(section) {
+  if (["checklist", "linkgrid", "pins", "cardlinks", "bloglist"].includes(section.type)) {
+    return !section.items || section.items.length === 0;
+  }
+  return false;
 }
 
 function renderNavItem(item, activeLabel) {
@@ -168,12 +213,21 @@ function renderFooter() {
 function renderSection(section, pageSeed, idx) {
   switch (section.type) {
     case "text": {
-      const img = idx % 2 === 0 ? photoFor(pageSeed + idx) : null;
+      // Image resolution, in order: an explicit `image` on the section, then the
+      // alternating auto-photo, then none. `noImage: true` forces text-only.
+      // The two-column grid class is only applied when an image is actually going to
+      // be rendered — a section with no image collapses to single-column full-width
+      // text rather than reserving an empty half-width column beside the copy.
+      let img = null;
+      if (!section.noImage) {
+        if (section.image) img = u("/assets/images/" + section.image);
+        else if (idx % 2 === 0) img = photoFor(pageSeed + idx);
+      }
       return `<section class="section${img ? " section-with-image" : ""}">
-        ${img ? `<div class="section-image"><img src="${img}" alt="" loading="lazy"></div>` : ""}
+        ${img ? `<div class="section-image"><img src="${img}" alt="${esc(section.imageAlt || "")}" loading="lazy"></div>` : ""}
         <div class="section-body">
           ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
-          ${section.body.map((p) => `<p>${esc(p)}</p>`).join("\n          ")}
+          ${section.body.map((p) => `<p>${rich(p)}</p>`).join("\n          ")}
         </div>
         ${
           section.buttonCta
@@ -195,7 +249,7 @@ function renderSection(section, pageSeed, idx) {
         </div>
         <div class="section-body">
           ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
-          ${section.body.map((p) => `<p>${esc(p)}</p>`).join("\n          ")}
+          ${section.body.map((p) => `<p>${rich(p)}</p>`).join("\n          ")}
         </div>
       </section>`;
     }
@@ -231,13 +285,56 @@ function renderSection(section, pageSeed, idx) {
       </section>`;
     }
     case "brandbar": {
-      return `<section class="section brand-bar">
+      // Manufacturer logo strip. The live site rotates through the brands in groups
+      // (Alta / Accent Awning / Hunter Douglas / Fabricut, then Orion / Kirsch /
+      // Sunbrella), so `groups` is an array of arrays and each group is one slide.
+      // Group 1 is inlined active so the strip still shows real logos with JS off;
+      // rotation lives in assets/js/main.js.
+      const groups = section.groups || [section.items];
+      const renderLogo = (item) => {
+        const img = `<img src="${u("/assets/images/" + item.file)}" alt="${esc(item.alt)}" loading="lazy">`;
+        return item.href ? `<a href="${u(item.href)}">${img}</a>` : img;
+      };
+      if (groups.length < 2) {
+        return `<section class="section brand-bar">
         <div class="brand-bar-inner">
+          ${groups[0].map(renderLogo).join("\n          ")}
+        </div>
+      </section>`;
+      }
+      return `<section class="section brand-bar">
+        <div class="brand-bar-rotator" data-brand-bar>
+          ${groups
+            .map(
+              (g, i) =>
+                `<div class="brand-bar-inner brand-bar-slide${i === 0 ? " active" : ""}">
+            ${g.map(renderLogo).join("\n            ")}
+          </div>`
+            )
+            .join("\n          ")}
+        </div>
+        <div class="brand-bar-dots">
+          ${groups
+            .map((g, i) => `<button class="brand-bar-dot${i === 0 ? " active" : ""}" aria-label="Show brand group ${i + 1}"></button>`)
+            .join("\n          ")}
+        </div>
+      </section>`;
+    }
+    case "cardlinks": {
+      // Large clickable photo cards — the live site's landing-card pattern (e.g. the
+      // Blind Cleaning / Drapery Cleaning pair directly under the Cleaning banner).
+      return `<section class="section">
+        ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+        ${section.intro ? `<p>${rich(section.intro)}</p>` : ""}
+        <div class="card-links">
           ${section.items
-            .map((item) => {
-              const img = `<img src="${u("/assets/images/" + item.file)}" alt="${esc(item.alt)}" loading="lazy">`;
-              return item.href ? `<a href="${u(item.href)}">${img}</a>` : img;
-            })
+            .map(
+              (i) => `<a class="photo-card" href="${u(i.href)}">
+            <img src="${u("/assets/images/" + i.file)}" alt="${esc(i.alt || i.label)}" loading="lazy">
+            <span class="photo-card-label">${esc(i.label)}</span>
+            ${i.blurb ? `<span class="photo-card-blurb">${esc(i.blurb)}</span>` : ""}
+          </a>`
+            )
             .join("\n          ")}
         </div>
       </section>`;
@@ -245,18 +342,31 @@ function renderSection(section, pageSeed, idx) {
     case "checklist": {
       return `<section class="section">
         ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
-        ${section.intro ? `<p>${esc(section.intro)}</p>` : ""}
+        ${section.intro ? `<p>${rich(section.intro)}</p>` : ""}
         <ul class="checklist">
-          ${section.items.map((i) => `<li>${esc(i)}</li>`).join("\n          ")}
+          ${section.items.map((i) => `<li>${rich(i)}</li>`).join("\n          ")}
         </ul>
       </section>`;
     }
     case "linkgrid": {
+      // Items carrying a `file` render as photo cards (the live Service Areas page's
+      // city cards); items without one stay as the plain text cards used by every
+      // bottom cross-link block.
+      const anyPhotos = section.items.some((i) => i.file);
       return `<section class="section">
         ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
-        ${section.intro ? `<p>${esc(section.intro)}</p>` : ""}
-        <div class="link-grid">
-          ${section.items.map((i) => `<a class="link-card" href="${u(i.href)}">${esc(i.label)}</a>`).join("\n          ")}
+        ${section.intro ? `<p>${rich(section.intro)}</p>` : ""}
+        <div class="${anyPhotos ? "card-links" : "link-grid"}">
+          ${section.items
+            .map((i) =>
+              i.file
+                ? `<a class="photo-card" href="${u(i.href)}">
+            <img src="${u("/assets/images/" + i.file)}" alt="${esc(i.alt || i.label)}" loading="lazy">
+            <span class="photo-card-label">${esc(i.label)}</span>
+          </a>`
+                : `<a class="link-card" href="${u(i.href)}">${esc(i.label)}</a>`
+            )
+            .join("\n          ")}
         </div>
       </section>`;
     }
@@ -271,12 +381,16 @@ function renderSection(section, pageSeed, idx) {
     case "cta": {
       return `<section class="section cta-band">
         <h2>${esc(section.heading)}</h2>
-        ${section.body.map((p) => `<p>${esc(p)}</p>`).join("\n        ")}
+        ${section.body.map((p) => `<p>${rich(p)}</p>`).join("\n        ")}
         <a class="btn btn-accent" href="${u("/contact-us")}">Get a Free Consultation</a>
       </section>`;
     }
     case "gallery": {
-      const imgs = PHOTO_POOL.slice(0, section.count || 21);
+      // An explicit `images` list is the real gallery (Our Work mirrors the live site's
+      // 21 project photos, in the live order). The PHOTO_POOL fallback is a slice of
+      // whatever happens to be in the pool, so it can pull in the wrong kind of image —
+      // prefer an explicit list for any gallery that is meant to be curated.
+      const imgs = section.images || PHOTO_POOL.slice(0, section.count || 21);
       return `<section class="section">
         <div class="gallery-grid">
           ${imgs.map((f) => `<a href="${u("/assets/images/" + f)}" class="gallery-item"><img src="${u("/assets/images/" + f)}" alt="Completed project photo" loading="lazy"></a>`).join("\n          ")}
@@ -305,7 +419,7 @@ function renderSection(section, pageSeed, idx) {
       // placeholder line was removed 2026-08-06 — it was showing to real site visitors.
       return `<section class="section contact-section">
         <div class="contact-info">
-          ${section.body.map((p) => `<p class="lead">${esc(p)}</p>`).join("")}
+          ${section.body.map((p) => `<p class="lead">${rich(p)}</p>`).join("")}
           <p><strong>Phone:</strong> <a href="${BUSINESS.phoneHref}">${BUSINESS.phone}</a></p>
           <p><strong>Email:</strong> <a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a></p>
           <p><strong>Service Areas:</strong> ${esc(BUSINESS.serviceAreaShort)}</p>
@@ -327,7 +441,7 @@ function renderSection(section, pageSeed, idx) {
       return `<section class="section contact-section quick-quote-section">
         <div class="contact-info">
           ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
-          ${section.intro ? `<p class="lead">${esc(section.intro)}</p>` : ""}
+          ${section.intro ? `<p class="lead">${rich(section.intro)}</p>` : ""}
         </div>
         <form class="contact-form" name="cleaning-quick-form" method="POST" data-static-form>
           <label>First Name<input type="text" name="firstName" required></label>
@@ -344,7 +458,14 @@ function renderSection(section, pageSeed, idx) {
 
 function renderPage(page) {
   const seed = page.path;
-  const heroImg = page.home ? heroFor(seed + "-hero") : heroFor(seed + "-h1");
+  // `heroImage` pins a page's banner to a specific file. Without it the banner is
+  // whatever HERO_POOL happens to hash to, which is fine for most pages but produced
+  // the logo-on-grey Cleaning banner — pin the banner wherever the choice matters.
+  const heroImg = page.heroImage
+    ? u("/assets/images/" + page.heroImage)
+    : page.home
+    ? heroFor(seed + "-hero")
+    : heroFor(seed + "-h1");
   const bodyClass = page.home ? "page-home" : "page-inner";
 
   // Rotating hero banner (live site's SlideShowContainer). Slide 1 is inlined so
@@ -384,7 +505,12 @@ function renderPage(page) {
         </div>
       </section>`;
 
-  const sectionsHtml = (page.sections || []).map((s, i) => renderSection(s, seed, i)).join("\n");
+  // Index BEFORE filtering so dropping an empty section doesn't shuffle the
+  // even/odd photo alternation of every section after it.
+  const sectionsHtml = (page.sections || [])
+    .map((s, i) => (isEmptySection(s) ? "" : renderSection(s, seed, i)))
+    .filter(Boolean)
+    .join("\n");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -436,7 +562,7 @@ console.log(`Built ${count} pages.`);
 // BASE_PATH/GH Pages preview hosting — this is what search engines should index once
 // DNS points here, not the current jakelevi89.github.io preview.
 const PRODUCTION_ORIGIN = "https://www.on-sitespecialists.com";
-const today = "2026-08-06"; // bump this when regenerating after real content changes
+const today = "2026-08-08"; // bump this when regenerating after real content changes
 const sitemapUrls = PAGES.map(
   (p) => `  <url>
     <loc>${PRODUCTION_ORIGIN}${p.path === "/" ? "/" : p.path + "/"}</loc>

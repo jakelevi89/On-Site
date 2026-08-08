@@ -69,6 +69,37 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// ---- rotating manufacturer logo strip ----
+// The live site cycles its brand logos in groups rather than showing all seven at
+// once. Same reduced-motion and hover-pause rules as the other rotators here.
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("[data-brand-bar]").forEach(function (root) {
+    var slides = root.querySelectorAll(".brand-bar-slide");
+    var dots = root.parentElement.querySelectorAll(".brand-bar-dot");
+    if (slides.length < 2) return;
+    var current = 0;
+    var timer = null;
+    var INTERVAL = 4000;
+
+    function show(idx) {
+      current = (idx + slides.length) % slides.length;
+      slides.forEach(function (s, i) { s.classList.toggle("active", i === current); });
+      dots.forEach(function (d, i) { d.classList.toggle("active", i === current); });
+    }
+    function restart() {
+      if (timer) clearInterval(timer);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      timer = setInterval(function () { show(current + 1); }, INTERVAL);
+    }
+    dots.forEach(function (d, i) {
+      d.addEventListener("click", function () { show(i); restart(); });
+    });
+    root.addEventListener("mouseenter", function () { if (timer) clearInterval(timer); });
+    root.addEventListener("mouseleave", restart);
+    restart();
+  });
+});
+
 // ---- rotating hero banner (homepage slideshow) ----
 document.addEventListener("DOMContentLoaded", function () {
   var hero = document.querySelector("[data-hero-slideshow]");
