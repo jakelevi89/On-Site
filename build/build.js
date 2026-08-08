@@ -23,6 +23,13 @@ const manifestLines = fs.readFileSync(manifestPath, "utf8").trim().split("\n");
 const IMAGE_FILES = manifestLines.map((l) => l.split("\t")[0]).filter(Boolean);
 // img_000.* is always the logo (first image found on homepage crawl)
 const LOGO_FILE = IMAGE_FILES.find((f) => f.startsWith("img_000."));
+// Square icon-only crop of the logo mark, for the browser-tab favicon. LOGO_FILE
+// itself is a wide lockup (icon + wordmark + tagline, ~2.66:1) since the header/
+// footer crop it larger for legibility (2026-08-08 fix pass) — using that wide
+// image directly as a favicon squashes it into the square tab-icon slot and it
+// renders visibly stretched. This file is NOT in manifest.txt, so it's invisible
+// to IMAGE_FILES/PHOTO_POOL and can never leak into a photo gallery.
+const FAVICON_FILE = "favicon-icon.png";
 
 // ---- image pools ----
 // image-meta.json ({file: [w, h]}) is generated from the actual files; used to keep
@@ -387,7 +394,7 @@ function renderPage(page) {
 <title>${esc(page.title)}</title>
 <meta name="description" content="${esc(page.description)}">
 <link rel="canonical" href="https://www.on-sitespecialists.com${page.path}">
-<link rel="icon" href="${u("/assets/images/" + LOGO_FILE)}">
+<link rel="icon" href="${u("/assets/images/" + FAVICON_FILE)}" sizes="192x192">
 <link rel="stylesheet" href="${u("/assets/css/style.css")}">
 </head>
 <body class="${bodyClass}">
