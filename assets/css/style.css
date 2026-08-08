@@ -444,11 +444,18 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
    the UA stylesheet's [hidden]{display:none} and leave the widget stuck open. */
 #onsiteChat [hidden] { display: none !important; }
 
-/* pulsing ring draws the eye on first visit, quiets once the panel is opened */
+/* Pulsing ring draws the eye on first visit, quiets once the panel is opened
+   (chat-widget.js drops .chat-pulse on the first click, so it only returns on a
+   fresh page load - a tab you already clicked in will look static).
+   The expanding ring matches the CVA/RLS keyframe shape and 2.2s timing exactly.
+   The scale breathe is a step BEYOND both siblings: on a white page the ring
+   alone is far less visible than it is over their dark backgrounds, so the
+   button itself needs to move a little to read as alive. */
 @keyframes chatPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(243, 27, 32, 0.5), 0 6px 18px rgba(46, 56, 56, 0.3); }
+  0%   { transform: scale(1);     box-shadow: 0 0 0 0 rgba(243, 27, 32, 0.5), 0 6px 18px rgba(46, 56, 56, 0.3); }
+  50%  { transform: scale(1.055); }
   70%  { box-shadow: 0 0 0 14px rgba(243, 27, 32, 0), 0 6px 18px rgba(46, 56, 56, 0.3); }
-  100% { box-shadow: 0 0 0 0 rgba(243, 27, 32, 0), 0 6px 18px rgba(46, 56, 56, 0.3); }
+  100% { transform: scale(1);     box-shadow: 0 0 0 0 rgba(243, 27, 32, 0), 0 6px 18px rgba(46, 56, 56, 0.3); }
 }
 .chat-pulse { animation: chatPulse 2.2s ease-out infinite; }
 @keyframes teaserIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -462,12 +469,16 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   animation: teaserIn 0.3s ease forwards;
   cursor: pointer;
 }
+/* same glass family as the panel, but a small bubble of text floating over
+   photography needs more ground under it, so it sits higher up the opacity range */
 #chatTeaser .teaser-inner {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  background: #fff;
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(46, 56, 56, 0.1);
   border-radius: 14px;
   border-bottom-right-radius: 4px;
   box-shadow: 0 10px 28px rgba(46, 56, 56, 0.18);
@@ -502,13 +513,21 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   box-shadow: 0 4px 16px rgba(46, 56, 56, 0.35);
   transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.15s ease;
 }
+/* scale, not translateY: while the pulse is running its keyframe owns `transform`,
+   so a translate here would simply be ignored and then jump once the pulse stops */
 #chatToggle:hover {
   background: #d21419;
-  transform: translateY(-1px);
+  transform: scale(1.06);
   box-shadow: 0 8px 22px rgba(46, 56, 56, 0.4);
 }
 #chatToggle svg { width: 25px; height: 25px; }
 
+/* Frosted glass panel body, translated from CVA rather than copied.
+   CVA's .glass is rgba(255,255,255,0.04) over a DARK page - 4% white reads as
+   frosted there and would be invisible here. On a white site the equivalent
+   effect is a high-opacity white veil doing the same job: you can see the page
+   photography moving behind it, blurred, but body text stays legible. The
+   header bar stays fully opaque, exactly as CVA's does. */
 #chatPanel {
   position: absolute;
   bottom: 74px;
@@ -517,13 +536,21 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   max-width: 380px;
   height: 70vh;
   max-height: 560px;
-  background: #fff;
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(46, 56, 56, 0.1);
   border-radius: 14px;
   box-shadow: 0 22px 55px rgba(46, 56, 56, 0.28);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+/* Without backdrop-filter there is no blur, so a 62% veil would just be washed
+   out and hard to read over hero photography. Fall back to the opaque panel. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #chatPanel { background: #fff; }
+  #chatTeaser .teaser-inner { background: #fff; }
 }
 .chat-head {
   display: flex;
@@ -547,6 +574,8 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .chat-slats i:nth-child(2) { background: #fff; opacity: 0.85; }
 .chat-slats i:nth-child(3) { background: var(--brand-red); opacity: 0.75; }
 
+/* transparent so the panel's frosted backdrop shows through the message area -
+   an opaque fill here would cover the glass over most of the panel */
 #chatMessages {
   flex: 1;
   overflow-y: auto;
@@ -555,7 +584,7 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   flex-direction: column;
   gap: 11px;
   font-size: 0.9rem;
-  background: var(--bg-alt);
+  background: transparent;
 }
 .chat-row { display: flex; }
 .chat-row.is-user { justify-content: flex-end; }
@@ -572,9 +601,12 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   color: #fff;
   border-bottom-right-radius: 4px;
 }
+/* Nearly opaque on purpose. CVA's bot bubble is translucent because its text is
+   white on a dark page; here the text is dark and has to stay readable over
+   whatever photo is blurring through, so the bubble carries its own ground. */
 .is-bot .chat-bubble {
-  background: #fff;
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(46, 56, 56, 0.1);
   color: var(--text-main);
   border-bottom-left-radius: 4px;
 }
@@ -585,8 +617,11 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   align-items: center;
   padding: 12px;
   flex-shrink: 0;
-  border-top: 1px solid var(--border);
-  background: #fff;
+  border-top: 1px solid rgba(46, 56, 56, 0.1);
+  /* the input row and the legal line below it share one denser ground, so the
+     bottom of the panel reads as a solid footer under the frosted body - the
+     same way CVA's composer sits below its glass message area */
+  background: rgba(255, 255, 255, 0.78);
 }
 #chatInput {
   flex: 1;
@@ -596,8 +631,8 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   font: inherit;
   font-size: 0.9rem;
   color: var(--text-main);
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(46, 56, 56, 0.14);
 }
 #chatInput::placeholder { color: var(--text-light); }
 #chatInput:focus {
@@ -626,7 +661,9 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   padding: 0 14px 11px;
   margin: 0;
   line-height: 1.4;
-  background: #fff;
+  /* 0.78, not the panel's 0.62: this line is 0.68rem in a muted grey, and over a
+     blurred dark hero photo a lighter veil drops it under 4.5:1 contrast */
+  background: rgba(255, 255, 255, 0.78);
 }
 
 @media (max-width: 800px) {
