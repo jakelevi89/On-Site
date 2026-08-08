@@ -258,7 +258,13 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   grid-template-columns: 1.2fr 1fr 1fr;
   gap: 2rem;
 }
-.footer-brand img { height: 48px; margin-bottom: 0.75rem; }
+/* width:auto is load-bearing, do not drop it. The logo is the only <img> the
+   build gives width/height attributes to (for CLS), and those attributes act as
+   a presentational hint of width:359px. Setting height alone here does NOT keep
+   the aspect ratio - the hint supplies the width and the logo renders 359x48,
+   i.e. stretched to 7.5:1 instead of its true 2.66:1. .brand img and
+   .brand-bar-inner img both neutralise it the same way. */
+.footer-brand img { height: 48px; width: auto; margin-bottom: 0.75rem; }
 .footer-links ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
 .footer-links a { color: var(--text-main); }
 .footer-social { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.65rem; align-self: start; }
