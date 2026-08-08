@@ -33,7 +33,10 @@
   // Pages preview). Different from a glitch, so say something different.
   var OFFLINE = "The assistant isn't switched on for this preview link yet. In the meantime, " +
     "call " + PHONE + " for a free in-home consultation and we'll get you scheduled.";
-  var TEASER = "👋 Question about blinds, drapery, or cleaning? Just ask.";
+  // Matches the RLS teaser's shape ("Question about X? Just ask") but names the
+  // three things people actually come here for, so the bubble does some work
+  // rather than just announcing that a chat exists.
+  var TEASER = "👋 Have any questions? Ask about blinds, drapery, or cleaning.";
 
   var wrap = document.createElement('div');
   wrap.id = 'onsiteChat';

@@ -552,27 +552,36 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   #chatPanel { background: #fff; }
   #chatTeaser .teaser-inner { background: #fff; }
 }
+/* Brand red, not charcoal. --brand-dark (#2E3838) is a real brand color, but as a
+   large solid fill it just reads black and looks like a generic third-party chat
+   box. Red is what the site already uses for filled elements (.btn-accent,
+   .phone-pill), so this matches the site's own treatment rather than inventing one.
+   The slight gradient to #d21419 (already in the palette, the button hover shade)
+   is not decoration: flat #F31B20 puts white text at 4.2:1, and darkening the
+   lower half lifts the text contrast while still reading as brand red. */
 .chat-head {
   display: flex;
   align-items: center;
   gap: 11px;
   padding: 14px 16px;
   flex-shrink: 0;
-  background: var(--brand-dark);
+  background: linear-gradient(160deg, var(--brand-red) 0%, #d21419 100%);
   color: #fff;
 }
 .chat-head p { margin: 0; font-size: 0.92rem; font-weight: 600; font-family: var(--font-head); }
-.chat-head .chat-sub { font-size: 0.75rem; color: #b9c2c2; }
-/* Slat mark — three stacked bars, a nod to a blind rather than CVA's voice waveform */
+/* near-white, not the old grey: a muted grey subtitle on red is unreadable */
+.chat-head .chat-sub { font-size: 0.75rem; color: rgba(255, 255, 255, 0.92); }
+/* Slat mark — three stacked bars, a nod to a blind rather than CVA's voice
+   waveform. White now the banner is red; the red slats would have vanished. */
 .chat-slats { display: grid; gap: 3px; width: 22px; flex-shrink: 0; }
 .chat-slats i {
   display: block;
   height: 3px;
   border-radius: 2px;
-  background: var(--brand-red);
+  background: #fff;
 }
-.chat-slats i:nth-child(2) { background: #fff; opacity: 0.85; }
-.chat-slats i:nth-child(3) { background: var(--brand-red); opacity: 0.75; }
+.chat-slats i:nth-child(2) { opacity: 0.75; }
+.chat-slats i:nth-child(3) { opacity: 0.55; }
 
 /* transparent so the panel's frosted backdrop shows through the message area -
    an opaque fill here would cover the glass over most of the panel */
