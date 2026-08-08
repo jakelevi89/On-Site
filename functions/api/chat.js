@@ -11,12 +11,27 @@
 //
 // Set in the Cloudflare Pages project (Settings -> Environment variables),
 // encrypted. Never commit real values here:
-//   OPENAI_API_KEY   (required, secret)
-//   OPENAI_MODEL     (optional, defaults below)
+//   ONSITE_OPEN_AI_API_KEY  (required, secret) - On-Site's OWN key, deliberately
+//                           separate from the shared pipeline key so this site's
+//                           spend is isolated and can be revoked on its own.
+//   OPENAI_API_KEY          (optional fallback, for a shared-key deployment)
+//   OPENAI_MODEL            (optional, defaults below)
+//   CHAT_RL                 (optional KV namespace binding - see rate limiting)
 //
 // NOTE: this endpoint stores nothing and creates no lead record. Anyone ready to
 // move forward gets routed to the phone number, which is the one path that
 // actually reaches the team (the contact form has no backend yet - see README).
+//
+// ABUSE SURFACE - READ BEFORE TRUSTING THE ORIGIN CHECK.
+// The origin allowlist below is NOT authentication. It stops a browser on some
+// other site from calling this endpoint, and nothing more. A script can send any
+// Origin header it likes, so anyone who reads this file (the repo is public) can
+// spend your OpenAI balance. The mitigations here are (1) requiring an allowed
+// Origin, which at least costs an attacker a header, (2) the request caps above,
+// and (3) an optional per-IP cap if a KV namespace is bound. The real defence is
+// a Cloudflare Rate Limiting rule on /api/chat, and Turnstile if it ever gets
+// hit in earnest - see README. Set a hard monthly spend cap on the OpenAI key
+// too, since that is the one control that cannot be argued with.
 
 const ALLOWED_ORIGINS = [
   'https://www.on-sitespecialists.com',
@@ -29,6 +44,11 @@ const ALLOWED_ORIGINS = [
 const MAX_TURNS = 12;          // messages (user+assistant) kept per conversation
 const MAX_MSG_CHARS = 800;     // per-message cap
 const MAX_INPUT_BYTES = 20000; // whole request body cap
+
+// Per-IP cap, enforced only when a KV namespace is bound as CHAT_RL. Without the
+// binding this is inert and the endpoint behaves exactly as before, so the site
+// still works on a plain Pages project with no KV set up.
+const RATE_LIMIT_PER_HOUR = 40;
 
 const SYSTEM_PROMPT = `You are the website chat assistant for On-Site Custom Drapes & Blinds (the company also
 goes by On-Site Specialists), a custom window treatment and window treatment cleaning company based in
@@ -152,13 +172,23 @@ because that is a property of the method rather than a schedule promise.
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // Origin is REQUIRED, not just checked when present. Browsers always send it on
+  // a POST, including same-origin ones, so demanding it costs real visitors
+  // nothing while closing the "just omit the header" bypass. It does not stop a
+  // script that sets the header - see the abuse-surface note at the top.
   const origin = request.headers.get('Origin') || '';
-  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+  if (!ALLOWED_ORIGINS.includes(origin)) {
     return json({ error: 'Forbidden' }, 403);
   }
 
-  if (!env.OPENAI_API_KEY) {
+  const apiKey = env.ONSITE_OPEN_AI_API_KEY || env.OPENAI_API_KEY;
+  if (!apiKey) {
     return json({ error: 'Chat is not configured yet.' }, 503);
+  }
+
+  const limited = await overRateLimit(request, env);
+  if (limited) {
+    return json({ error: 'Too many messages. Please call (949) 770-8989.' }, 429);
   }
 
   let body;
@@ -187,7 +217,7 @@ export async function onRequestPost(context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: env.OPENAI_MODEL || 'gpt-5.4-mini',
@@ -215,6 +245,31 @@ export async function onRequestPost(context) {
 
 export async function onRequestGet() {
   return json({ ok: true, note: 'POST { messages: [{role, content}, ...] } to chat with the On-Site assistant.' });
+}
+
+// Per-IP hourly cap, backed by KV. Returns false (allow) whenever KV is not
+// bound or misbehaves: a rate limiter that takes the whole chat down when the
+// namespace hiccups is worse than the abuse it prevents. This is a speed bump
+// for casual scripted abuse, not a substitute for a Cloudflare rate-limit rule -
+// KV is eventually consistent, so a burst across colos can slip through.
+async function overRateLimit(request, env) {
+  if (!env.CHAT_RL || typeof env.CHAT_RL.get !== 'function') return false;
+  const ip = request.headers.get('CF-Connecting-IP');
+  if (!ip) return false;
+  // Fixed hourly window. Cheaper than a sliding window (one KV key per IP-hour)
+  // and precise enough for "stop someone hammering it".
+  const bucket = Math.floor(Date.now() / 3600000);
+  const key = `rl:${ip}:${bucket}`;
+  try {
+    const count = parseInt((await env.CHAT_RL.get(key)) || '0', 10);
+    if (count >= RATE_LIMIT_PER_HOUR) return true;
+    // expirationTtl floor is 60s; two hours keeps the key alive past its window
+    // without needing a cleanup pass.
+    await env.CHAT_RL.put(key, String(count + 1), { expirationTtl: 7200 });
+    return false;
+  } catch (e) {
+    return false;
+  }
 }
 
 function json(obj, status) {

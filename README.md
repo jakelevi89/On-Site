@@ -99,10 +99,32 @@ looks right but replies "the assistant isn't switched on for this preview link y
 phone number. To switch it on:
 
 1. Deploy to Cloudflare Pages.
-2. In the Pages project → **Settings → Environment variables**, add `OPENAI_API_KEY` as an
-   **encrypted** variable. (Optional: `OPENAI_MODEL` to override the default.) Never commit the key.
+2. In the Pages project → **Settings → Environment variables**, add `ONSITE_OPEN_AI_API_KEY` as an
+   **encrypted** variable — On-Site's own OpenAI key, kept separate from other projects' keys so this
+   site's spend is isolated and can be revoked on its own. (Optional: `OPENAI_MODEL` to override the
+   default model; `OPENAI_API_KEY` still works as a fallback for a shared-key setup.) Never commit
+   the key — `.gitignore` covers `.env` and `.dev.vars`, which is where one would otherwise land.
 3. Add the project's real domain to `ALLOWED_ORIGINS` at the top of `functions/api/chat.js` —
    including the `*.pages.dev` subdomain if you're testing there, or the browser gets a 403.
+
+### Protecting the endpoint from abuse
+
+**The origin allowlist is not authentication.** It stops a browser on another site from calling
+`/api/chat`, and nothing else. A script can send any `Origin` header it likes, and this repo is
+public, so anyone who reads `functions/api/chat.js` can point a loop at the endpoint and spend the
+OpenAI balance. What's in the code already: the `Origin` header is *required* (so the "just omit it"
+bypass is closed), request size, turn count, and reply length are capped, and an optional per-IP
+hourly cap runs if you bind a KV namespace as `CHAT_RL` (inert without it, and it fails open if KV
+errors rather than taking chat down).
+
+Before this sees real traffic, add at least one of these — none of them live in the repo:
+
+1. **A Cloudflare Rate Limiting rule on `/api/chat`** — the cheapest real defence, and it runs at the
+   edge before the function bills you anything.
+2. **A hard monthly spend cap on the OpenAI key** — the one control that cannot be argued with. Do
+   this regardless of the others.
+3. **Cloudflare Turnstile** if it's ever actually targeted — that's the only option here that
+   distinguishes a real visitor from a script.
 
 What the assistant will **not** do, by design: quote any price, ballpark, or discount amount (there's
 no pricing on the site — every job is quoted from the actual windows); promise appointment times or

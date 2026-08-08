@@ -1,3 +1,13 @@
 .DS_Store
 Thumbs.db
 node_modules/
+
+# Secrets. functions/api/chat.js needs an OpenAI key, and `wrangler pages dev`
+# reads one from .dev.vars, so a real key can easily end up in this directory.
+# This repo is public (GitHub Pages serves it), so a committed key is a live
+# leak, not a near miss. Keep these ignored even though none exist right now.
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example
