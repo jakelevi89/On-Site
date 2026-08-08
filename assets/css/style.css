@@ -76,7 +76,7 @@ p { margin: 0 0 1rem; }
   align-items: center;
   gap: 1.5rem;
 }
-.brand img { height: 56px; width: auto; }
+.brand img { height: 72px; width: auto; }
 .site-nav { flex: 1; }
 .nav-list {
   list-style: none;
@@ -197,6 +197,7 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .section-with-image { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
 .section-image img { border-radius: var(--radius); width: 100%; height: 320px; object-fit: cover; }
 .section-image video { border-radius: var(--radius); width: 100%; height: 320px; object-fit: cover; display: block; background: #1c2424; }
+.section-cta-standalone { grid-column: 1 / -1; text-align: center; margin: 1.5rem 0 0; }
 
 .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
 .checklist li { padding-left: 1.75rem; position: relative; }
@@ -301,6 +302,14 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 }
 
 /* ---- rotating image carousel (homepage) ---- */
+.carousel-label {
+  text-align: center;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--brand-dark);
+  margin: 0 0 1rem;
+}
 .carousel {
   position: relative;
   max-width: 860px;

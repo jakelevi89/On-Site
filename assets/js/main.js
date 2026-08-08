@@ -28,7 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      alert("Thanks! This form isn't wired up to send email yet — see the project README for a quick Formspree/Netlify Forms setup. In the meantime, please call " + (document.querySelector(".phone-pill") ? document.querySelector(".phone-pill").textContent : "us") + ".");
+      // Visitor-facing copy only — no developer/README language here. The form has no
+      // backend yet (see README "Contact form"), so send people to the phone instead.
+      alert("Thanks for reaching out! For the fastest response, please call us at (949) 770-8989 and we'll get your free consultation scheduled.");
     });
   }
 });

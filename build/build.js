@@ -114,7 +114,7 @@ function renderHeader(activeLabel) {
   return `<header class="site-header">
     <div class="header-inner">
       <a class="brand" href="${u("/")}">
-        <img src="${u("/assets/images/" + LOGO_FILE)}" alt="${esc(BUSINESS.name)}" width="180" height="64">
+        <img src="${u("/assets/images/" + LOGO_FILE)}" alt="${esc(BUSINESS.name)}" width="359" height="135">
       </a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -136,7 +136,7 @@ function renderFooter() {
   return `<footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <img src="${u("/assets/images/" + LOGO_FILE)}" alt="${esc(BUSINESS.name)}" width="150" height="53">
+        <img src="${u("/assets/images/" + LOGO_FILE)}" alt="${esc(BUSINESS.name)}" width="359" height="135">
         <p>${esc(BUSINESS.serviceAreaShort)}</p>
         <p><a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a> &nbsp;|&nbsp; <a href="${BUSINESS.phoneHref}">${BUSINESS.phone}</a></p>
       </div>
@@ -168,6 +168,11 @@ function renderSection(section, pageSeed, idx) {
           ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
           ${section.body.map((p) => `<p>${esc(p)}</p>`).join("\n          ")}
         </div>
+        ${
+          section.buttonCta
+            ? `<p class="section-cta-standalone"><a class="btn btn-dark" href="${u(section.buttonCta.href)}">${esc(section.buttonCta.label)}</a></p>`
+            : ""
+        }
       </section>`;
     }
     case "textVideo": {
@@ -198,6 +203,7 @@ function renderSection(section, pageSeed, idx) {
             ? `<a class="btn-pill" href="${u(section.cta.href)}">${esc(section.cta.label)} <span class="arrow">&#8594;</span></a>`
             : ""
         }
+        ${section.galleryLabel ? `<p class="carousel-label">${esc(section.galleryLabel)}</p>` : ""}
         <div class="carousel" data-carousel>
           <div class="carousel-track">
             ${section.images
@@ -286,6 +292,10 @@ function renderSection(section, pageSeed, idx) {
       </section>`;
     }
     case "contactForm": {
+      // DEV NOTE (source only — never render this to visitors): these forms have no
+      // backend yet and must be wired to Formspree/Netlify Forms before launch. See
+      // README "Contact form". The old visible "this form needs to be connected..."
+      // placeholder line was removed 2026-08-06 — it was showing to real site visitors.
       return `<section class="section contact-section">
         <div class="contact-info">
           ${section.body.map((p) => `<p class="lead">${esc(p)}</p>`).join("")}
@@ -300,7 +310,6 @@ function renderSection(section, pageSeed, idx) {
           <label>Where did you hear about us?<input type="text" name="referral"></label>
           <label>Message<textarea name="message" rows="4"></textarea></label>
           <button type="submit" class="btn btn-accent">Send</button>
-          <p class="form-note">This form needs to be connected to an email service (e.g. Formspree) before it will actually deliver messages — see the README.</p>
         </form>
       </section>`;
     }
@@ -318,7 +327,6 @@ function renderSection(section, pageSeed, idx) {
           <label>Last Name<input type="text" name="lastName" required></label>
           <label>Email<input type="email" name="email" required></label>
           <button type="submit" class="btn btn-accent">Send</button>
-          <p class="form-note">This form needs to be connected to an email service (e.g. Formspree) before it will actually deliver messages — see the README.</p>
         </form>
       </section>`;
     }

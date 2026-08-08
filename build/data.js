@@ -42,16 +42,11 @@ const NAV = [
     ],
   },
   { label: "About Us", href: "/about-us" },
-  {
-    label: "Service Areas",
-    href: "/service-areas",
-    children: [
-      { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
-      { label: "Huntington Beach", href: "/service-areas/window-treatments-huntington-beach" },
-      { label: "Laguna Beach", href: "/service-areas/window-treatments-laguna-beach" },
-      { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine" },
-    ],
-  },
+  // Service Areas is a PLAIN link to the index page — no hover submenu. This matches
+  // the live site, where city links live only inline in the Service Areas page body
+  // ("Featured Service Areas" grid) and in the bottom cross-link blocks. Do not
+  // re-add a `children` array here.
+  { label: "Service Areas", href: "/service-areas" },
   { label: "Our Work", href: "/our-work" },
   { label: "Blog", href: "/window-treatment-blog-orange-county" },
 ];
@@ -77,13 +72,17 @@ function whyChoose(items) {
 // internal-linking / local-SEO pattern; see seo-service-area-pages-win.md, which
 // credits this exact hub-and-spoke structure with real ROI). Kept as shared
 // constants so every page pulls from one source of truth.
+// Order/naming matches live homepage exactly (2026-08-08 fix pass, item 9):
+// Sheer Shades & Silhouettes, Roller - Roman - Banded Shades, Drapery & Top
+// Treatments, Blind Motorization, Woven Woods & Bamboo Shades, Wood Blinds,
+// Custom Window Treatments.
 const PRODUCT_LINKS = [
   { label: "Sheer Shades & Silhouettes", href: "/hunter-douglas-shades-blinds/sheer-shades" },
-  { label: "Drapery and Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
+  { label: "Roller - Roman - Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades" },
+  { label: "Drapery & Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
+  { label: "Blind Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
   { label: "Woven Woods & Bamboo Shades", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo" },
-  { label: "Roller, Roman & Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades" },
-  { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
-  { label: "Wood & Faux Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
+  { label: "Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
   { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
 ];
 const CLEANING_LINKS = [
@@ -152,8 +151,11 @@ PAGES.push({
       type: "text",
       heading: "Window Treatment Cleaning Specialists",
       body: [
-        "At On-Site Specialists, we take pride in our expert drapery and blind cleaning services. Hunter Douglas refers our method of cleaning as one of the best in the industry — the injection/extraction method — which cleans window treatments on-site without the shrinkage or damage risked by ordinary cleaning methods.",
+        "At On-Site Specialists, we take pride in our expert drapery and blind cleaning services. Hunter Douglas refers our method of cleaning to their clients, recognizing our expertise in blind and drapery cleaning. We use the Injection-Extraction method—an advanced, eco-friendly cleaning technique that effectively removes dust, allergens, and stains while preserving fabric integrity. Our specialized process extends the life of your window treatments, ensuring they remain fresh, spotless, and like new. With meticulous attention to detail and a commitment to excellence, we provide professional, on-site cleaning without the hassle of removal, keeping your home or business looking its best.",
       ],
+      // Standalone "Free Consult" button under this paragraph, matching live
+      // (2026-08-08 fix pass — was missing entirely).
+      buttonCta: { label: "Free Consult", href: "/contact-us" },
     },
     {
       // Newport Beach project-photo showcase — live homepage has a captioned photo
@@ -164,11 +166,13 @@ PAGES.push({
       // Live site has a plain "Newport Beach" text link here — redesigned as a
       // proper pill CTA button per Jake, 2026-08-06 ("don't match it identically").
       cta: { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
+      // "Find Us On" label above the photo strip, matching live (2026-08-08 fix pass).
+      galleryLabel: "Find Us On",
       images: [
-        { file: "img_008.jpeg", alt: "Blue drapes" },
-        { file: "img_009.jpg", alt: "Blue and white drapes inside a Newport Beach home" },
-        { file: "img_010.jpeg", alt: "Cellular shades inside a Laguna Beach home" },
-        { file: "img_011.jpeg", alt: "Banded shades inside an Irvine home" },
+        { file: "img_008.jpeg", alt: "Blue drapes with shades" },
+        { file: "img_009.jpg", alt: "Blue and white drapes inside Newport Beach home" },
+        { file: "img_010.jpeg", alt: "cellular shades inside Laguna Beach home" },
+        { file: "img_011.jpeg", alt: "Banded shades inside Irvine home" },
       ],
     },
     crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
@@ -353,8 +357,20 @@ PAGES.push({
   h1: "Custom Window Treatments for Every Style & Need",
   sections: [
     {
+      // Full body copy matching live (2026-08-08 fix pass, item 5) — intro
+      // paragraph, bulleted category descriptions, and a CTA line.
       type: "text",
-      body: ["At On-Site Custom Drapes & Blinds, we offer a wide selection of luxury window treatments designed for style, functionality, and energy efficiency. Explore our product categories below, or schedule a complimentary consultation."],
+      body: [
+        "At On-Site Custom Drapes & Blinds, we offer a wide selection of luxury window treatments designed for style, functionality, and energy efficiency. Whether you're looking for Hunter Douglas Shades, motorized blinds, or classic wood blinds, our expert team will help you find the perfect solution.",
+        "Explore our premium window treatment options below:",
+        "👉 Roller & Roman Shades – Sleek, modern designs for light control & privacy.",
+        "👉 Sheer Shades & Silhouettes – Elegant light filtering with a soft, airy feel.",
+        "👉 Motorized Blinds & Smart Shades – Control your shades effortlessly with PowerView® Automation.",
+        "👉 Wood & Faux Wood Blinds – Timeless, natural beauty with durable materials.",
+        "👉 Drapery & Top Treatments – Custom fabrics & styles for a luxurious finish.",
+        "👉 Woven Woods & Bamboo Shades – Eco-friendly, textured designs inspired by nature.",
+        "📞 Need help choosing the perfect window treatments? Schedule a free consultation today!",
+      ],
     },
     {
       type: "linkgrid",
