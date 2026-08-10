@@ -239,10 +239,19 @@ function renderSection(section, pageSeed, idx) {
         if (section.image) img = u("/assets/images/" + section.image);
         else if (idx % 2 === 0 && section.body.join(" ").length >= MIN_COPY_FOR_PHOTO) img = photoFor(pageSeed + idx);
       }
-      return `<section class="section${img ? " section-with-image" : ""}">
+      // `headingLink` renders live's two-line centred heading: an underlined link on the
+      // first line, the rest of the phrase plain on the second. `narrow: true` puts the
+      // section in the same 800px centred column the Products photo grid uses and
+      // centres the copy — live's treatment for that page's intro block.
+      const headingHtml = section.headingLink
+        ? `<h2 class="heading-stacked"><a href="${u(section.headingLink.href)}">${esc(section.headingLink.label)}</a><br>${esc(section.headingLink.rest)}</h2>`
+        : section.heading
+        ? `<h2>${esc(section.heading)}</h2>`
+        : "";
+      return `<section class="section${img ? " section-with-image" : ""}${section.narrow ? " section-narrow" : ""}">
         ${img ? `<div class="section-image"><img src="${img}" alt="${esc(section.imageAlt || "")}" loading="lazy"></div>` : ""}
         <div class="section-body">
-          ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+          ${headingHtml}
           ${section.body.map((p) => `<p>${rich(p)}</p>`).join("\n          ")}
         </div>
         ${
@@ -349,7 +358,7 @@ function renderSection(section, pageSeed, idx) {
       return `<section class="section">
         ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
         ${section.intro ? `<p>${rich(section.intro)}</p>` : ""}
-        <div class="card-links">
+        <div class="card-links" data-reveal-group>
           ${section.items
             .map(
               (i) => `<a class="photo-card" href="${u(i.href)}">
@@ -363,13 +372,20 @@ function renderSection(section, pageSeed, idx) {
       </section>`;
     }
     case "quicklinks": {
-      // The curated "ribbon" link buttons live puts just above the footer on SOME
-      // product sub-pages — 2 on Roller & Roman, 3 on Sheer Shades, 1 on Wood Blinds,
-      // and none at all on Motorization / Drapery / Woven Woods (verified against the
-      // live HTML 2026-08-10: they are Wix StylableButton components, and only those
-      // three pages carry any). They are hand-picked per page and mostly point OUTSIDE
-      // the products tree, so this is NOT the auto-generated crossLink() block and must
-      // not be turned into one — do not "helpfully" add a set to the other three pages.
+      // The curated "ribbon" link buttons live puts just above the footer on the product
+      // sub-pages. Counts per live's rendered DOM (re-counted 2026-08-10, superseding an
+      // earlier miscount of "2 / 3 / 1 / none"): Roller & Roman 3, Sheer Shades 2, Wood
+      // Blinds 2, and one apiece on Drapery, Motorization and Woven Woods — every page
+      // carries at least one.
+      //
+      // They are hand-picked per page and mostly point OUTSIDE the products tree: these
+      // are internal cross-links, not generic CTAs, and that inline-linking pattern is
+      // what seo-service-area-pages-win.md credits with the ~$9k win. So this is NOT the
+      // auto-generated crossLink() block, and the per-page sets must not be flattened
+      // into one shared list or swapped for a generic "free consultation" button.
+      //
+      // Live's own label reads "Conatct Us Now" on all four pages that carry it. That
+      // typo is not reproduced — the clone says "Contact Us Now".
       //
       // Geometry and typography are live's (220x58, 18px, 700 weight, 0.2em tracking,
       // square corners, white label). The FILL is deliberately NOT live's #6298AA

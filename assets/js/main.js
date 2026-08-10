@@ -98,7 +98,11 @@ document.addEventListener("DOMContentLoaded", function () {
   restart();
 });
 
-// ---- scroll reveal (Products index photo grid) ----
+// ---- scroll reveal (Products index photo grid + Cleaning index landing cards) ----
+// Two different entrance animations hang off this one observer — the tiles get
+// fadeIn + arcIn, the cleaning cards get shuttersIn. Which one applies is decided in
+// CSS by the container class (.photo-grid vs .card-links); the JS just adds
+// .is-visible and does not care.
 // Runs immediately rather than on DOMContentLoaded: this script tag sits at the end of
 // <body>, so the grid is already parsed, and arming the hidden state here — before the
 // browser has painted — avoids a flash of fully-visible tiles that then snap back to
@@ -120,9 +124,13 @@ document.addEventListener("DOMContentLoaded", function () {
         observer.unobserve(entry.target);
       });
     },
-    // A row has to be meaningfully on screen before it animates, but not fully so —
-    // 18% fires as the row's top third clears the fold.
-    { threshold: 0.18, rootMargin: "0px 0px -40px 0px" }
+    // Fire slightly BEFORE the tile enters view, not after. The old
+    // threshold: 0.18 + rootMargin: "0px 0px -40px 0px" let a tile be fully on screen
+    // while still sitting at near-zero opacity mid-animation — that is what read as
+    // "washed out" while scrolling (Jake, 2026-08-10). A 1% threshold with a positive
+    // bottom margin starts the entrance just under the fold so it is finished, or
+    // nearly so, by the time the tile is actually being looked at.
+    { threshold: 0.01, rootMargin: "0px 0px 120px 0px" }
   );
 
   Array.prototype.forEach.call(groups, function (group) {

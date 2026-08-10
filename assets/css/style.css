@@ -282,8 +282,10 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .photo-card-label { display: block; padding: 1rem 1.25rem 0; font-weight: 700; font-size: 1.1rem; }
 .photo-card-blurb { display: block; padding: 0.35rem 1.25rem 1rem; color: var(--text-light); font-size: 0.95rem; }
 .photo-card-label:last-child { padding-bottom: 1rem; }
+/* No image dim on hover — live's cleaning cards have no hover effect at all
+   (pointer-tested 2026-08-10). The border/label colour shift is ours and stays as the
+   link affordance. */
 .photo-card:hover { border-color: var(--brand-red); color: var(--brand-red); text-decoration: none; }
-.photo-card:hover img { opacity: 0.92; }
 .pin { display: inline-block; padding: 0.6rem 1rem; background: var(--bg-alt); border-radius: 999px; font-size: 0.9rem; }
 
 /* ---- Quick-link ribbon buttons ---- */
@@ -316,13 +318,39 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 }
 .quick-link:hover { background: #d21419; color: #fff; text-decoration: none; }
 
+/* Narrow centred text column — live's Products index intro block. Same 800px width as
+   the photo grid above it, so the two line up. */
+.section-narrow { max-width: 800px; margin-inline: auto; }
+.section-narrow .section-body { text-align: center; }
+/* Live's heading here is two centred lines, the first an underlined link. */
+.heading-stacked { text-align: center; }
+.heading-stacked a { color: inherit; text-decoration: underline; }
+.heading-stacked a:hover { color: var(--brand-red); }
+
 /* ---- Products index photo grid ---- */
 /* Live's Products index: two large photo tiles per row, each an underlined text link
    under its photo, no card border and no blurb copy (that is what separates this from
    .photo-card). This replaced a text-only pill list that had no photos at all. */
-.photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2.5rem; }
+/* Grid sits in a narrower centered column than the content well, so the tiles read as
+   modest thumbnails rather than hero images. Live's tiles measure 358x212; the clone
+   was spanning the full ~925px column and rendering 447x300. */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem 2.5rem;
+  max-width: 800px;
+  margin-inline: auto;
+}
 .photo-grid-item { display: block; color: var(--brand-dark); }
-.photo-grid-item img { width: 100%; height: 300px; object-fit: cover; border-radius: var(--radius); }
+/* aspect-ratio, not a fixed height: at 358x212 live's tiles are 1.69:1, and the old
+   `height: 300px` forced 1.49:1, hard-cropping every source photo top and bottom.
+   object-fit stays as a safety net but should barely engage at the correct ratio. */
+.photo-grid-item img {
+  width: 100%;
+  aspect-ratio: 358 / 212;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
 .photo-grid-label {
   display: block;
   margin-top: 0.85rem;
@@ -332,26 +360,94 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   font-weight: 600;
   text-decoration: underline;
 }
+/* No hover effect on the tile. Hover-tested against live with a real pointer
+   2026-08-10: transform, opacity, filter and box-shadow are all unchanged on :hover.
+   The `img { opacity: .92 }` that used to live here was ours, not live's. */
 .photo-grid-item:hover { color: var(--brand-red); text-decoration: none; }
-.photo-grid-item:hover img { opacity: 0.92; }
 
-/* Scroll reveal. .reveal-armed is added by main.js, never by the markup: without JS
-   (or without IntersectionObserver) the class never lands and the tiles just render
-   normally, instead of being stuck at opacity 0 forever. The two tiles in a row cross
-   the threshold together, which is what produces live's two-at-a-time reveal; the
-   nth-child delay only staggers the pair slightly. */
-.photo-grid.reveal-armed .photo-grid-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+/* ---- Scroll-reveal entrance animations ----
+   .reveal-armed is added by main.js, never by the markup: without JS (or without
+   IntersectionObserver) the class never lands and the content just renders normally
+   instead of being stuck at opacity 0 forever. Never move the hidden state into
+   unconditional CSS — that turns a JS failure into an invisible page.
+
+   Live runs two DIFFERENT Wix entrance animations, and both are reproduced below from
+   live's own computed styles and keyframes. What the clone had before was a single
+   generic fade-up with a stagger on the right column; live has neither a stagger nor
+   any vertical slide. */
+
+/* Products index tiles: Wix `fadeIn` + `arcIn`, stacked on each tile.
+   The arc is a 3D swing — the tile pivots around an axis half the grid width behind
+   itself, rotating 80deg on Y down to 0. Live's container reports --motion-width: 980px,
+   hence the 490px radius; it is live's value and is deliberately not tied to the 800px
+   grid above. No per-item delay: live fires all tiles together. */
+.photo-grid.reveal-armed .photo-grid-item { opacity: 0; }
+.photo-grid.reveal-armed .photo-grid-item.is-visible {
+  --arc-radius: 490px;
+  opacity: 1;
+  animation:
+    tile-fade-in 0.84s cubic-bezier(0.47, 0, 0.745, 0.715) backwards,
+    tile-arc-in 1.2s cubic-bezier(0.86, 0, 0.07, 1) backwards;
 }
-.photo-grid.reveal-armed .photo-grid-item:nth-child(even) { transition-delay: 0.12s; }
-.photo-grid.reveal-armed .photo-grid-item.is-visible { opacity: 1; transform: none; }
+@keyframes tile-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes tile-arc-in {
+  from {
+    transform: perspective(800px) translateZ(calc(var(--arc-radius) * -1))
+               rotateY(-80deg)
+               translateZ(var(--arc-radius));
+  }
+  to {
+    transform: perspective(800px) translateZ(calc(var(--arc-radius) * -1))
+               rotateY(0deg)
+               translateZ(var(--arc-radius));
+  }
+}
+
+/* Cleaning index landing cards: Wix `shuttersIn` — a different animation, and a
+   deliberate one for a window-treatment company: 12 vertical slats opening like a
+   venetian blind. The clip-path is a single polygon encoding 12 disjoint bands; the
+   degenerate segments along y=0 are the seams that let one polygon draw 12 rectangles.
+   Both cards animate together, no stagger. */
+.card-links.reveal-armed .photo-card { opacity: 0; }
+.card-links.reveal-armed .photo-card.is-visible {
+  opacity: 1;
+  animation: card-shutters-in 1.2s cubic-bezier(0.47, 0, 0.745, 0.715) backwards;
+}
+@keyframes card-shutters-in {
+  from {
+    clip-path: polygon(0.0000% 0%, 0.0000% 0%, 0.0000% 100%, 0.0000% 100%, 0.0000% 0%, 8.3333% 0%, 8.3333% 0%,
+      8.3333% 100%, 8.3333% 100%, 8.3333% 0%, 16.6667% 0%, 16.6667% 0%, 16.6667% 100%, 16.6667% 100%,
+      16.6667% 0%, 25.0000% 0%, 25.0000% 0%, 25.0000% 100%, 25.0000% 100%, 25.0000% 0%, 33.3333% 0%,
+      33.3333% 0%, 33.3333% 100%, 33.3333% 100%, 33.3333% 0%, 41.6667% 0%, 41.6667% 0%, 41.6667% 100%,
+      41.6667% 100%, 41.6667% 0%, 50.0000% 0%, 50.0000% 0%, 50.0000% 100%, 50.0000% 100%, 50.0000% 0%,
+      58.3333% 0%, 58.3333% 0%, 58.3333% 100%, 58.3333% 100%, 58.3333% 0%, 66.6667% 0%, 66.6667% 0%,
+      66.6667% 100%, 66.6667% 100%, 66.6667% 0%, 75.0000% 0%, 75.0000% 0%, 75.0000% 100%,
+      75.0000% 100%, 75.0000% 0%, 83.3333% 0%, 83.3333% 0%, 83.3333% 100%, 83.3333% 100%, 83.3333% 0%,
+      91.6667% 0%, 91.6667% 0%, 91.6667% 100%, 91.6667% 100%, 91.6667% 0%);
+  }
+  to {
+    clip-path: polygon(0.0000% 0%, 8.3333% 0%, 8.3333% 100%, 0.0000% 100%, 0.0000% 0%, 8.3333% 0%, 16.6667% 0%,
+      16.6667% 100%, 8.3333% 100%, 8.3333% 0%, 16.6667% 0%, 25.0000% 0%, 25.0000% 100%, 16.6667% 100%,
+      16.6667% 0%, 25.0000% 0%, 33.3333% 0%, 33.3333% 100%, 25.0000% 100%, 25.0000% 0%, 33.3333% 0%,
+      41.6667% 0%, 41.6667% 100%, 33.3333% 100%, 33.3333% 0%, 41.6667% 0%, 50.0000% 0%, 50.0000% 100%,
+      41.6667% 100%, 41.6667% 0%, 50.0000% 0%, 58.3333% 0%, 58.3333% 100%, 50.0000% 100%, 50.0000% 0%,
+      58.3333% 0%, 66.6667% 0%, 66.6667% 100%, 58.3333% 100%, 58.3333% 0%, 66.6667% 0%, 75.0000% 0%,
+      75.0000% 100%, 66.6667% 100%, 66.6667% 0%, 75.0000% 0%, 83.3333% 0%, 83.3333% 100%,
+      75.0000% 100%, 75.0000% 0%, 83.3333% 0%, 91.6667% 0%, 91.6667% 100%, 83.3333% 100%, 83.3333% 0%,
+      91.6667% 0%, 100.0000% 0%, 100.0000% 100%, 91.6667% 100%, 91.6667% 0%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .photo-grid.reveal-armed .photo-grid-item {
+  .photo-grid.reveal-armed .photo-grid-item,
+  .card-links.reveal-armed .photo-card {
     opacity: 1;
     transform: none;
-    transition: none;
+    clip-path: none;
+    animation: none;
   }
 }
 
@@ -442,7 +538,8 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 }
 @media (max-width: 700px) {
   .photo-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .photo-grid-item img { height: 220px; }
+  /* No height override here: an explicit height beats aspect-ratio, which would put
+     the old 1.49:1 crop back on mobile only. Single-column tiles keep live's ratio. */
   /* Full-width stacked buttons rather than a 220px pill floating in a narrow column */
   .quick-links { flex-direction: column; }
   .quick-link { width: 100%; font-size: 1rem; letter-spacing: 0.15em; }
@@ -466,6 +563,20 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   .header-cta { margin-left: auto; }
   .hero-inner h1 { font-size: 1.5rem; }
   .hero-sub { font-size: 1.05rem; }
+}
+/* Narrow phones: the header row could not fit and pushed the page sideways.
+   .header-cta is a flex row holding a Contact button plus a `white-space: nowrap`
+   phone number, so its min-content width never shrank; add the ~191px logo (72px tall
+   at the logo's 2.66:1) and 1.5rem gaps and the row exceeded a 420px viewport, which
+   made the WHOLE document scroll horizontally. Fixes, in order of effect: let
+   .header-cta wrap, allow it to shrink below min-content (min-width: 0), trim the
+   logo, and tighten the gutters. */
+@media (max-width: 480px) {
+  .header-inner { padding: 0.75rem 1rem; gap: 0.75rem; }
+  .brand img { height: 52px; }
+  .header-cta { flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; min-width: 0; }
+  .header-cta .phone { font-size: 0.9rem; }
+  .header-cta .btn { padding: 0.5rem 0.9rem; font-size: 0.9rem; }
 }
 
 /* ---- "Find Us On" row + static photo strip (homepage) ----

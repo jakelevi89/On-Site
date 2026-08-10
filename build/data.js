@@ -464,7 +464,15 @@ PAGES.push({
       // Full body copy matching live (2026-08-08 fix pass, item 5) — intro
       // paragraph, bulleted category descriptions, and a CTA line.
       type: "text",
-      heading: "Custom Window Treatments for Every Style & Need",
+      // Live renders this as two centred lines with the first line an underlined link,
+      // not one left-aligned run of text (2026-08-10 visual pass).
+      headingLink: {
+        label: "Custom Window Treatments",
+        href: "/custom-window-treatments-orange-county",
+        rest: "for Every Style & Need",
+      },
+      // Live keeps this block in the same narrow centred column as the tile grid.
+      narrow: true,
       // Full-width, no side photo: live runs this copy across the column with no image
       // beside it (verified 2026-08-10 — there is no <img> anywhere between the tile
       // grid and the bottom cross-link blocks). The earlier note here guessed at a
@@ -522,6 +530,8 @@ PAGES.push({
         "With a simple press of a button, wirelessly operate your home's motorized window fashions. With the push of a button, darken your media room for a video game or to watch your favorite movie. Simultaneously lower groups of shades or tilt blinds to protect your home furnishings from harsh ultraviolet rays. Reach for the remote on your night stand to lower bedroom shades or tilt blinds for an afternoon nap — all accomplished quickly and conveniently with a remote or wireless wall switch. Control window fashions throughout your house with a simple slide and tap on your mobile device. Wireless accessories allow you to automate your motorization system further.",
       ],
     },
+    // Live carries a single Contact button here, above the call-us block (2026-08-10).
+    { type: "quicklinks", items: [{ label: "Contact Us Now", href: "/contact-us" }] },
     { type: "cta", heading: "Don't wait!", body: ["Call us today! " + BUSINESS.phone] },
   ],
 });
@@ -575,13 +585,12 @@ PAGES.push({
       imageAlt: "Vignette modern Roman shade with soft horizontal folds",
       body: ["Simple, uncluttered, innovative. Luxurious fabrics and soft folds give Vignette® Modern Roman Shades a clean, crisp look, with the added benefit of enhanced child safety. Offered in semi-sheer, light-filtering and room-darkening fabrics, the range of styles and fold sizes help you create warm, inviting, beautiful windows."],
     },
-    // Live's curated bottom link buttons for THIS page, in live's order. Three of them,
-    // and note two of the three point OUTSIDE the products tree — this set is
-    // hand-picked per page, not "link to the other products".
+    // Live's curated bottom link buttons for THIS page, in live's order — two, both
+    // pointing outside the products tree. Re-counted against live's rendered DOM
+    // 2026-08-10; the earlier "3 including Service Areas" was a miscount.
     {
       type: "quicklinks",
       items: [
-        { label: "Service Areas", href: "/service-areas" },
         { label: "Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
         { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
       ],
@@ -610,12 +619,15 @@ PAGES.push({
       imageAlt: "Custom wood blinds in a sunlit dining room",
       body: ["Genuine Woods are made from Oak, Cherry and Pine and offer your home natural warmth. Complementing the styling of any room, these premium hardwood blinds feature an exclusive finish that provides longstanding protection against everyday wear. For a softer, more textured look, see our [woven woods & bamboo shades](/hunter-douglas-shades-blinds/woven-wood-bamboo); for effortless operation, ask about [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs). We also [clean and restore](/hunter-douglas-blind-cleaning/orange-county) wood blinds on-site."],
     },
-    // Live's curated bottom link button for THIS page — a single one, and it sits ABOVE
-    // the "Don't wait! Call us today!" block, not after it (checked against live's
-    // source order 2026-08-10).
+    // Live's curated bottom link buttons for THIS page — two, sitting ABOVE the
+    // "Don't wait! Call us today!" block, not after it (live's source order,
+    // 2026-08-10). The Contact button was missed in the earlier count.
     {
       type: "quicklinks",
-      items: [{ label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" }],
+      items: [
+        { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
+        { label: "Contact Us Now", href: "/contact-us" },
+      ],
     },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
   ],
@@ -636,8 +648,12 @@ PAGES.push({
   sections: [
     {
       type: "text",
-      // No side image on live (confirmed 2026-08-10 photo audit).
-      noImage: true,
+      // CORRECTION (2026-08-10 visual pass): the photo audit recorded "no side image on
+      // live" for this page's sections. It was screenshotting mid-arcIn, while live's
+      // images were still at opacity 0 — live does have photos here. Give live 2s+ to
+      // settle before concluding an image is absent.
+      image: "img_090.jpg",
+      imageAlt: "Full-length drapery panels with a swagged top treatment in a formal living room",
       body: ["Full length drapery panels add insulation, texture, color and dimension. The variety of styles available is defined mainly by the type of header the panel has. Drapery layers beautifully over [sheer shades](/hunter-douglas-shades-blinds/sheer-shades) or [roller and Roman shades](/hunter-douglas-shades-blinds/roller-roman-shades), and we keep existing panels fresh with on-site [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county)."],
     },
     {
@@ -660,13 +676,18 @@ PAGES.push({
     {
       type: "text",
       heading: "Formal & Casual Styles",
-      // idx 4 — noImage (confirmed 2026-08-10 photo audit).
-      noImage: true,
+      // See the correction on section[0]: live has photos on this page. Paired here
+      // because the shot is a formal damask-weight swag treatment, which is what this
+      // copy is describing.
+      image: "img_093.jpg",
+      imageAlt: "Formal swagged valance over a bay window in a dining room",
       body: [
         "Fabrics such as damask, silk and tapestry create a formal feel. These are typically lined and sometimes interlined to add weight and protection to the fabrics.",
         "Tabbed or shirred panels have a soft fullness with less uniformity than pleated panels. Grommet panels also provide a modern trend in less formal styling. Panels can be suspended via various methods including shirred on a rod or hung from drapery pins that attach to the rod or rings on the rod.",
       ],
     },
+    // Live carries a single Contact button here (2026-08-10).
+    { type: "quicklinks", items: [{ label: "Contact Us Now", href: "/contact-us" }] },
   ],
 });
 
@@ -686,8 +707,12 @@ PAGES.push({
     {
       type: "text",
       heading: "Roller — Solar Shades",
-      // No side image on live (confirmed 2026-08-10 photo audit).
-      noImage: true,
+      // CORRECTION (2026-08-10 visual pass): the photo audit recorded "no side image on
+      // live" for this page's sections. It was screenshotting mid-arcIn, while live's
+      // images were still at opacity 0 — live does have photos here. Give live 2s+ to
+      // settle before concluding an image is absent.
+      image: "img_099.jpg",
+      imageAlt: "Solar roller shades filtering daylight in a beamed great room",
       body: ["Roller shades exude contemporary sophistication with their clean lines and simple design. They offer extensive customization with numerous colors and fabrics. These shades are user-friendly, cost-effective, and provide various light-filtering capabilities. [Motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs) options allow remote control operation. Decorative enhancements like valances and [top treatments](/hunter-douglas-shades-blinds/drapery-top-treatments) enable personalized window styling."],
     },
     {
@@ -698,8 +723,9 @@ PAGES.push({
     {
       type: "text",
       heading: "Roman Shades",
-      // idx 2 — noImage (confirmed 2026-08-10 photo audit).
-      noImage: true,
+      // See the correction on section[0]: live has photos on this page.
+      image: "img_105.jpg",
+      imageAlt: "White Roman shade with contrast tape trim",
       body: ["Clean lines and classic tailoring have made Roman Shades a popular choice among interior designers and home owners alike. They serve privacy, light control, and decorative purposes and can include trim embellishments."],
     },
     {
@@ -711,14 +737,17 @@ PAGES.push({
         "Shirred: Formal styles providing fullness and dimension, best with sheer fabrics",
       ],
     },
-    // Live's curated bottom link buttons for THIS page, in live's order — exactly these
-    // two, both pointing into cleaning. Hand-picked per page, NOT the auto-generated
-    // crossLink() block, and NOT present on Motorization / Drapery / Woven Woods.
+    // Live's curated bottom link buttons for THIS page, in live's order — three: both
+    // cleaning services plus Contact. Hand-picked per page, NOT the auto-generated
+    // crossLink() block. (Re-counted 2026-08-10: the Contact button was missed before,
+    // and the claim that Motorization / Drapery / Woven Woods carry none was wrong —
+    // each carries a Contact button.)
     {
       type: "quicklinks",
       items: [
         { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
         { label: "Drapery Cleaning", href: "/hunter-douglas-blind-cleaning/drapery-orange-county" },
+        { label: "Contact Us Now", href: "/contact-us" },
       ],
     },
   ],
@@ -745,6 +774,8 @@ PAGES.push({
       imageAlt: "Woven wood and bamboo shade with natural reed texture",
       body: ["With unmatched style, selection and craftsmanship, Woven Wood Shades are perfect for today's casual lifestyle. Hand woven from all natural materials, these shades are uniquely textured and incredibly versatile. With the newest colors and weaves, you can bring the latest fashion to any room. Prefer a crisper, more traditional look? Compare them with our [wood & faux wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county), or add [drapery panels](/hunter-douglas-shades-blinds/drapery-top-treatments) for extra softness."],
     },
+    // Live carries a single Contact button here, above the call-us block (2026-08-10).
+    { type: "quicklinks", items: [{ label: "Contact Us Now", href: "/contact-us" }] },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
   ],
 });
@@ -756,9 +787,15 @@ PAGES.push({
   description: "Professional blind and drapery cleaning services in Orange County using the injection/extraction method. 20+ years of experience.",
   nav: "Cleaning",
   h1: "Orange County's Trusted Drapery & Blind Cleaning Experts",
-  // Pinned banner. Without this the hash landed on img_018 — the logo-on-white share
-  // card — which rendered as a stretched grey logo with the white <h1> on top of it.
-  heroImage: "img_117.jpg",
+  // No banner at all — by design on live, confirmed by Jake 2026-08-10. The page opens
+  // on the heading and goes straight into the two landing cards, which is the point:
+  // the cards are the page's primary route into the two cleaning services.
+  //
+  // The fifth pass "fixed" this page by ADDING a photo banner (pinned img_117.jpg,
+  // because the hash had landed on the logo-on-white share card). That was the wrong
+  // fix for the wrong problem — live has no banner here and never did, and nobody
+  // edited the live site. Don't re-add one.
+  noHero: true,
   sections: [
     {
       // Two large landing cards directly under the banner, before any body copy —
