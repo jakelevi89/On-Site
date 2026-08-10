@@ -321,7 +321,14 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 /* Narrow centred text column — live's Products index intro block. Same 800px width as
    the photo grid above it, so the two line up. */
 .section-narrow { max-width: 800px; margin-inline: auto; }
-.section-narrow .section-body { text-align: center; }
+/* The COLUMN is centred; the copy inside it is not. Live centres only the heading and
+   justifies the body copy — its computed text-align on these <p> is `justify`. Setting
+   `center` on .section-body instead (as this first did) also centred the 👉 category
+   lines, which live left-aligns. Justify is a no-op on lines that do not wrap, since a
+   block's last line is never stretched, so the short bullet lines sit flush left on
+   their own and only the wrapping intro paragraph actually justifies. */
+.section-narrow .section-body h2 { text-align: center; }
+.section-narrow .section-body p { text-align: justify; }
 /* Live's heading here is two centred lines, the first an underlined link. */
 .heading-stacked { text-align: center; }
 .heading-stacked a { color: inherit; text-decoration: underline; }
