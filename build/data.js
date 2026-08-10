@@ -407,20 +407,54 @@ PAGES.push({
   title: "Roller Shades & Blinds | On-Site Custom Drapes & Blinds",
   description: "Explore our full line of Hunter Douglas shades, blinds, drapery, and motorization for Orange County homes.",
   nav: "Products",
-  h1: "Custom Window Treatments for Every Style & Need",
+  // Live's <h1> here is just "Products", sitting in a white title box on the banner —
+  // NOT the long "Custom Window Treatments for Every Style & Need" line, which live
+  // uses as the heading of the copy block BELOW the tile grid. Verified against live's
+  // rendered heading order 2026-08-10.
+  h1: "Products",
+  bannerStyle: "title",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_054.jpg",
   sections: [
     {
+      // Live's actual Products index layout: the banner is followed straight away by a
+      // 2-up grid of photo tiles, one per category, each captioned with an underlined
+      // link and no blurb copy. The clone previously had NO photos on this page at all
+      // — an emoji-bulleted text list plus a row of grey text-only pills — which is why
+      // this is a structural rebuild rather than a restyle.
+      //
+      // Order is live's VISUAL (row-major) order. Live's DOM order differs because Wix
+      // lays the grid out as two column containers, so reading the markup top-to-bottom
+      // gives column-major (Sheer, Drapery, Woven / Roller, Motorization, Wood) — don't
+      // "correct" this list to that.
+      //
+      // Every file is the real image live uses on this page, matched through
+      // assets/images/manifest.txt by its Wix media hash — not a stand-in. That
+      // includes Drapery (img_056) and Motorization (img_059): those two tiles are
+      // currently rendering as broken images ON LIVE, but the files were captured while
+      // they still worked, so the clone can show them correctly. Live's own breakage is
+      // not something to reproduce.
+      type: "photogrid",
+      items: [
+        { label: "Sheer Shades", href: "/hunter-douglas-shades-blinds/sheer-shades", file: "img_055.jpg", alt: "Sheer shades and Silhouette window shadings filtering daylight" },
+        { label: "Roller - Roman - Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades", file: "img_058.jpg", alt: "Roller shades in a contemporary living room" },
+        { label: "Drapery and Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments", file: "img_056.jpeg", alt: "Custom drapery panels layered over roller shades" },
+        { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs", file: "img_059.jpeg", alt: "PowerView motorized shades operated from a mobile device" },
+        { label: "Woven Woods", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo", file: "img_057.jpeg", alt: "Woven wood and bamboo shades with natural reed texture" },
+        { label: "Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county", file: "img_060.png", alt: "Custom wood blinds in a sunlit room" },
+      ],
+    },
+    {
       // Full body copy matching live (2026-08-08 fix pass, item 5) — intro
       // paragraph, bulleted category descriptions, and a CTA line.
       type: "text",
-      // Pinned (2026-08-10 photo audit). CAVEAT, not fully resolved: live actually
-      // shows a 2-photo collage here (img_055.jpg + img_058.jpg side by side); the
-      // section type only supports one image, so this picks the first. Flagged to
-      // Jake as a design-fidelity gap — would need a new/extended section type to
-      // show both.
-      image: "img_055.jpg",
+      heading: "Custom Window Treatments for Every Style & Need",
+      // Full-width, no side photo: live runs this copy across the column with no image
+      // beside it (verified 2026-08-10 — there is no <img> anywhere between the tile
+      // grid and the bottom cross-link blocks). The earlier note here guessed at a
+      // "2-photo collage" in this slot; that was actually the tile grid above, which
+      // now renders properly, so the photos are not duplicated down here.
+      noImage: true,
       body: [
         "At On-Site Custom Drapes & Blinds, we offer a wide selection of luxury [window treatments](/custom-window-treatments-orange-county) designed for style, functionality, and energy efficiency. Whether you're looking for [Hunter Douglas Shades](/service-areas/window-treatments-newport-beach/hunter-douglas), [motorized blinds](/hunter-douglas-shades-blinds/motorized-blinds-repairs), or classic [wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county), our expert team will help you find the perfect solution.",
         "Explore our premium window treatment options below:",
@@ -433,18 +467,9 @@ PAGES.push({
         "📞 Need help choosing the perfect window treatments? Schedule a [free consultation](/contact-us) today!",
       ],
     },
-    {
-      type: "linkgrid",
-      heading: "Product Categories",
-      items: [
-        { label: "Sheer Shades & Silhouettes", href: "/hunter-douglas-shades-blinds/sheer-shades" },
-        { label: "Drapery and Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
-        { label: "Woven Woods & Bamboo Shades", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo" },
-        { label: "Roller, Roman & Banded Shades", href: "/hunter-douglas-shades-blinds/roller-roman-shades" },
-        { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
-        { label: "Wood & Faux Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
-      ],
-    },
+    // The "Product Categories" text-pill linkgrid that used to sit here was removed
+    // 2026-08-10: it duplicated the photo grid above with no photos, and live has no
+    // such block.
     crossLink("Check out our cleaning services:", CLEANING_LINKS),
     crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
   ],
@@ -456,6 +481,10 @@ PAGES.push({
   description: "Motorized window treatments and PowerView Automation for Orange County homes — convenience, safety, and energy efficiency.",
   nav: "Products",
   h1: "Motorization",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_061.jpg",
   sections: [
@@ -467,7 +496,7 @@ PAGES.push({
       imageAlt: "Hunter Douglas PowerView motorized shades controlled from a phone app",
       body: [
         "When it comes time to decide whether you want your [custom window treatments](/custom-window-treatments-orange-county) with a motorized operating system, convenience is a key consideration – but it is not the only one. Enhanced safety is another benefit. As is greater energy efficiency.",
-        "Virtually every type of product can be outfitted with a motorized system – we offer the most innovative technology in the industry. The system appropriate for your custom window coverings depends mostly on the type of product you purchase. Some systems raise and lower [shades](/hunter-douglas-shades-blinds/roller-roman-shades) and adjust slats, vanes and louvers, while others move the window covering from side to side, rotating vanes and louvers. If a motor or remote ever stops responding, we also handle [motorization repairs](/hunter-douglas-blind-cleaning/orange-county).",
+        "Virtually every type of product can be outfitted with a motorized system – we offer the most innovative technology in the industry. The system appropriate for your custom window coverings depends mostly on the type of product you purchase. Some systems raise and lower [shades](/hunter-douglas-shades-blinds/roller-roman-shades) and adjust slats, vanes and louvers, while others move the window covering from side to side, rotating vanes and louvers. If a motor or remote ever stops responding, we also handle [motorization repairs](/contact-us).",
       ],
     },
     {
@@ -487,6 +516,10 @@ PAGES.push({
   description: "Sheer shades, Silhouette®, Luminette®, Pirouette® and Vignette® window shadings — privacy and softened light in one elegant solution.",
   nav: "Products",
   h1: "Sheer Shades",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_069.jpg",
   sections: [
@@ -526,6 +559,17 @@ PAGES.push({
       imageAlt: "Vignette modern Roman shade with soft horizontal folds",
       body: ["Simple, uncluttered, innovative. Luxurious fabrics and soft folds give Vignette® Modern Roman Shades a clean, crisp look, with the added benefit of enhanced child safety. Offered in semi-sheer, light-filtering and room-darkening fabrics, the range of styles and fold sizes help you create warm, inviting, beautiful windows."],
     },
+    // Live's curated bottom link buttons for THIS page, in live's order. Three of them,
+    // and note two of the three point OUTSIDE the products tree — this set is
+    // hand-picked per page, not "link to the other products".
+    {
+      type: "quicklinks",
+      items: [
+        { label: "Service Areas", href: "/service-areas" },
+        { label: "Wood Blinds", href: "/hunter-douglas-shades-blinds/wood-blinds-orange-county" },
+        { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
+      ],
+    },
   ],
 });
 
@@ -535,6 +579,10 @@ PAGES.push({
   description: "Genuine wood and faux wood blinds for Orange County homes — natural warmth, premium finishes, lasting durability.",
   nav: "Products",
   h1: "Wood Blinds",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_079.jpg",
   sections: [
@@ -546,6 +594,13 @@ PAGES.push({
       imageAlt: "Custom wood blinds in a sunlit dining room",
       body: ["Genuine Woods are made from Oak, Cherry and Pine and offer your home natural warmth. Complementing the styling of any room, these premium hardwood blinds feature an exclusive finish that provides longstanding protection against everyday wear. For a softer, more textured look, see our [woven woods & bamboo shades](/hunter-douglas-shades-blinds/woven-wood-bamboo); for effortless operation, ask about [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs). We also [clean and restore](/hunter-douglas-blind-cleaning/orange-county) wood blinds on-site."],
     },
+    // Live's curated bottom link button for THIS page — a single one, and it sits ABOVE
+    // the "Don't wait! Call us today!" block, not after it (checked against live's
+    // source order 2026-08-10).
+    {
+      type: "quicklinks",
+      items: [{ label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" }],
+    },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
   ],
 });
@@ -556,6 +611,10 @@ PAGES.push({
   description: "Full-length drapery panels and top treatments — pleated, shirred, tabbed and grommeted headers in formal and casual styles.",
   nav: "Products",
   h1: "Drapery Panels",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_088.jpg",
   sections: [
@@ -601,6 +660,10 @@ PAGES.push({
   description: "Roller, solar, designer banded, and Roman shades — clean lines, contemporary sophistication, and precise light control.",
   nav: "Products",
   h1: "Roller & Roman Shades",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_097.jpg",
   sections: [
@@ -632,6 +695,16 @@ PAGES.push({
         "Shirred: Formal styles providing fullness and dimension, best with sheer fabrics",
       ],
     },
+    // Live's curated bottom link buttons for THIS page, in live's order — exactly these
+    // two, both pointing into cleaning. Hand-picked per page, NOT the auto-generated
+    // crossLink() block, and NOT present on Motorization / Drapery / Woven Woods.
+    {
+      type: "quicklinks",
+      items: [
+        { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
+        { label: "Drapery Cleaning", href: "/hunter-douglas-blind-cleaning/drapery-orange-county" },
+      ],
+    },
   ],
 });
 
@@ -641,6 +714,10 @@ PAGES.push({
   description: "Hand-woven natural material shades — uniquely textured, versatile, and perfect for a casual lifestyle.",
   nav: "Products",
   h1: "Woven Woods and Bamboo Shades",
+  // Live shows a bare banner photo on all six product sub-pages: no heading and no
+  // phone CTA over the image, with the page title as plain dark text underneath
+  // (verified page by page against live 2026-08-10). See bannerStyle in build.js.
+  bannerStyle: "plain",
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_106.jpg",
   sections: [

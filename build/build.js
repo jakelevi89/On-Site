@@ -143,7 +143,7 @@ function rich(s) {
 // empty — a heading with visible nothing under it. Three service-area detail pages hit
 // this (they have no "Our Selection of..." items). Drop the whole section instead.
 function isEmptySection(section) {
-  if (["checklist", "linkgrid", "pins", "cardlinks", "bloglist"].includes(section.type)) {
+  if (["checklist", "linkgrid", "pins", "cardlinks", "bloglist", "quicklinks", "photogrid"].includes(section.type)) {
     return !section.items || section.items.length === 0;
   }
   return false;
@@ -362,6 +362,52 @@ function renderSection(section, pageSeed, idx) {
         </div>
       </section>`;
     }
+    case "quicklinks": {
+      // The curated "ribbon" link buttons live puts just above the footer on SOME
+      // product sub-pages — 2 on Roller & Roman, 3 on Sheer Shades, 1 on Wood Blinds,
+      // and none at all on Motorization / Drapery / Woven Woods (verified against the
+      // live HTML 2026-08-10: they are Wix StylableButton components, and only those
+      // three pages carry any). They are hand-picked per page and mostly point OUTSIDE
+      // the products tree, so this is NOT the auto-generated crossLink() block and must
+      // not be turned into one — do not "helpfully" add a set to the other three pages.
+      //
+      // Geometry and typography are live's (220x58, 18px, 700 weight, 0.2em tracking,
+      // square corners, white label). The FILL is deliberately NOT live's #6298AA
+      // blue-grey: Jake's call 2026-08-10 is brand colors only, so these use the same
+      // brand red the site already uses for every other filled element (.btn-accent,
+      // .phone-pill).
+      return `<section class="section section-quicklinks">
+        ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+        <div class="quick-links">
+          ${section.items.map((i) => `<a class="quick-link" href="${u(i.href)}">${esc(i.label)}</a>`).join("\n          ")}
+        </div>
+      </section>`;
+    }
+    case "photogrid": {
+      // Live's Products index layout: a 2-up grid of large photo tiles, each a photo
+      // with an underlined text link beneath it and no blurb copy. Distinct from
+      // "cardlinks" (bordered card, label inside the card box) and from the text-only
+      // "linkgrid" pills this replaced on that page.
+      //
+      // Tiles fade/slide in a row at a time on scroll. The hidden start state is armed
+      // by main.js (it adds .reveal-armed to the container) rather than being in the
+      // CSS unconditionally — with no JS, or no IntersectionObserver, the tiles simply
+      // render visible instead of being stuck invisible forever.
+      return `<section class="section">
+        ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
+        ${section.intro ? `<p>${rich(section.intro)}</p>` : ""}
+        <div class="photo-grid" data-reveal-group>
+          ${section.items
+            .map(
+              (i) => `<a class="photo-grid-item" href="${u(i.href)}">
+            <img src="${u("/assets/images/" + i.file)}" alt="${esc(i.alt || i.label)}" loading="lazy">
+            <span class="photo-grid-label">${esc(i.label)}</span>
+          </a>`
+            )
+            .join("\n          ")}
+        </div>
+      </section>`;
+    }
     case "checklist": {
       return `<section class="section">
         ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
@@ -496,9 +542,28 @@ function renderPage(page) {
     : heroFor(seed + "-h1");
   const bodyClass = page.home ? "page-home" : "page-inner";
 
+  // `bannerStyle` picks what, if anything, sits ON TOP of the banner photo:
+  //   "overlay" (default) — dark scrim + white <h1> + red phone pill. The original
+  //                         treatment, still what the About / Contact / Cleaning /
+  //                         Service Area pages use.
+  //   "title"             — photo + a white title box holding the <h1> only, NO phone
+  //                         CTA. Live's Products INDEX page ("Products").
+  //   "plain"             — bare photo, nothing over it at all; the <h1> renders as
+  //                         ordinary dark text below the banner instead. Live's six
+  //                         product SUB-pages, verified page by page 2026-08-10.
+  // The old build put an overlay <h1> + phone pill on all of them, which live does on
+  // none of the six.
+  const bannerStyle = page.bannerStyle || "overlay";
+
   // Rotating hero banner (live site's SlideShowContainer). Slide 1 is inlined so
   // the page renders identically with JS off; rotation lives in main.js.
-  const heroBlock = page.heroSlides
+  //
+  // Everything assigned to `bannerBlock` is FULL-BLEED: it renders as a direct child
+  // of <main>, which is edge-to-edge on inner pages, with only the sections (and the
+  // in-column `titleBlock`) boxed into the max-width column by .page-wrap. Before
+  // 2026-08-10 the banner sat inside the boxed column, so every inner-page banner had
+  // white margin down both sides and cropped tighter than live's.
+  const bannerBlock = page.heroSlides
     ? `<section class="hero hero-home hero-slideshow" data-hero-slideshow>
         ${page.heroSlides
           .map(
@@ -526,10 +591,15 @@ function renderPage(page) {
         </div>
       </section>`
     : page.noHero
-    ? `<div class="page-title-plain">
-        ${page.postMeta ? `<p class="post-meta">${esc(page.postMeta.date)} &middot; ${esc(page.postMeta.readTime)}</p>` : ""}
-        <h1>${esc(page.h1)}</h1>
-      </div>`
+    ? ""
+    : bannerStyle === "plain"
+    ? `<section class="page-banner page-banner-plain" role="img" aria-label="${esc(page.h1)}" style="background-image:url('${heroImg}')"></section>`
+    : bannerStyle === "title"
+    ? `<section class="page-banner page-banner-titled" style="background-image:url('${heroImg}')">
+        <div class="page-banner-titlebox">
+          <h1>${esc(page.h1)}</h1>
+        </div>
+      </section>`
     : `<section class="page-banner" style="background-image:url('${heroImg}')">
         <div class="page-banner-inner">
           <h1>${esc(page.h1)}</h1>
@@ -538,12 +608,37 @@ function renderPage(page) {
         </div>
       </section>`;
 
+  // In-column heading, above the sections and inside the max-width wrapper. Used by
+  // `noHero: true` (live has no banner photo at all) and by bannerStyle "plain" (live
+  // has a banner photo but shows the title as plain dark text underneath it). Both
+  // render the same .page-title-plain block, so they look identical below the fold.
+  const titleBlock =
+    page.home || bannerStyle === "title"
+      ? ""
+      : page.noHero || bannerStyle === "plain"
+      ? `<div class="page-title-plain">
+        ${page.postMeta ? `<p class="post-meta">${esc(page.postMeta.date)} &middot; ${esc(page.postMeta.readTime)}</p>` : ""}
+        <h1>${esc(page.h1)}</h1>
+      </div>`
+      : "";
+
   // Index BEFORE filtering so dropping an empty section doesn't shuffle the
   // even/odd photo alternation of every section after it.
   const sectionsHtml = (page.sections || [])
     .map((s, i) => (isEmptySection(s) ? "" : renderSection(s, seed, i)))
     .filter(Boolean)
     .join("\n");
+
+  // Home pages already run their own full-width <main> (each .section boxes itself),
+  // so they keep the old flat structure. Inner pages get the banner as a full-bleed
+  // direct child of <main> and everything else inside the boxed .page-wrap.
+  const mainInner = page.home
+    ? `${bannerBlock}\n${sectionsHtml}`
+    : `${bannerBlock}
+<div class="page-wrap">
+${titleBlock}
+${sectionsHtml}
+</div>`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -559,8 +654,7 @@ function renderPage(page) {
 <body class="${bodyClass}">
 ${renderHeader(page.nav)}
 <main>
-${heroBlock}
-${sectionsHtml}
+${mainInner}
 </main>
 ${renderFooter()}
 <script src="${u("/assets/js/main.js")}"></script>
@@ -595,7 +689,7 @@ console.log(`Built ${count} pages.`);
 // BASE_PATH/GH Pages preview hosting — this is what search engines should index once
 // DNS points here, not the current jakelevi89.github.io preview.
 const PRODUCTION_ORIGIN = "https://www.on-sitespecialists.com";
-const today = "2026-08-08"; // bump this when regenerating after real content changes
+const today = "2026-08-10"; // bump this when regenerating after real content changes
 const sitemapUrls = PAGES.map(
   (p) => `  <url>
     <loc>${PRODUCTION_ORIGIN}${p.path === "/" ? "/" : p.path + "/"}</loc>

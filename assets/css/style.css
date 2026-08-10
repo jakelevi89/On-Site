@@ -158,6 +158,12 @@ p { margin: 0 0 1rem; }
 .hero-sub { font-size: 1.3rem; margin-bottom: 1.5rem; }
 
 /* ---- Page banner (inner pages) ---- */
+/* Full-bleed by construction, not by a negative-margin/100vw hack: build.js renders
+   .page-banner as a direct child of <main>, which is edge-to-edge on inner pages, and
+   boxes everything else into .page-wrap. Until 2026-08-10 the banner sat inside the
+   max-width column, so every inner-page banner carried white margin down both sides
+   and cropped its photo tighter than live's does. Don't put the banner back inside
+   .page-wrap. */
 .page-banner {
   background-size: cover;
   background-position: center;
@@ -166,7 +172,11 @@ p { margin: 0 0 1rem; }
   display: flex;
   align-items: center;
 }
+/* The scrim exists to keep white overlay text legible, so it belongs ONLY to the
+   overlay treatment. On the two variants that carry no white-on-photo text it would
+   just be dimming the photo for nothing — live shows those banners undimmed. */
 .page-banner::before { content:""; position:absolute; inset:0; background: rgba(46,56,56,0.55); }
+.page-banner-plain::before, .page-banner-titled::before { content: none; }
 .page-banner-inner {
   position: relative;
   z-index: 1;
@@ -177,6 +187,26 @@ p { margin: 0 0 1rem; }
   width: 100%;
 }
 .page-banner-inner h1 { color: #fff; }
+
+/* bannerStyle: "plain" — bare photo, no text or CTA on it (live's six product
+   sub-pages). Slightly shorter than the overlay banner because there is nothing
+   inside it that needs vertical room. */
+.page-banner-plain { min-height: 300px; }
+
+/* bannerStyle: "title" — photo + a white title box, no phone CTA (live's Products
+   index). Reuses the homepage hero's translucent-white box treatment rather than
+   inventing a third banner look. */
+.page-banner-titled { justify-content: center; }
+.page-banner-titlebox {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 1.75rem 3.5rem;
+  margin: 1.5rem;
+  background: rgba(255,255,255,0.88);
+  border-radius: var(--radius);
+}
+.page-banner-titlebox h1 { margin: 0; }
 
 /* Plain-text page title — used where live has no banner photo at all, via `noHero: true`
    in build/data.js (Our Work, Accessibility Statement, the Blog index, all 4 blog posts).
@@ -205,6 +235,12 @@ p { margin: 0 0 1rem; }
 main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .page-home main { max-width: none; padding: 0; }
 .page-home main .section { max-width: var(--max-width); margin: 0 auto; padding: 3rem 1.5rem; }
+/* Inner pages: <main> goes full width so the banner can span the viewport, and the
+   content column moves down onto .page-wrap. The wrapper carries exactly the
+   max-width + side padding <main> used to, so every section inside it renders the
+   same as before — the only thing that changed is that the banner is now outside it. */
+.page-inner main { max-width: none; padding: 0; }
+.page-inner .page-wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .section { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
 .section:last-child { border-bottom: none; }
 .section-with-image { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
@@ -247,6 +283,75 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .photo-card:hover { border-color: var(--brand-red); color: var(--brand-red); text-decoration: none; }
 .photo-card:hover img { opacity: 0.92; }
 .pin { display: inline-block; padding: 0.6rem 1rem; background: var(--bg-alt); border-radius: 999px; font-size: 0.9rem; }
+
+/* ---- Quick-link ribbon buttons ---- */
+/* The hand-picked link buttons live puts just above the footer on three of the six
+   product sub-pages. Geometry and type are measured off live's Wix StylableButton:
+   220x58, 18px, weight 700, 0.2em tracking, square corners, white label.
+   Live fills them #6298AA (blue-grey) — deliberately NOT copied. Jake's call
+   2026-08-10 is brand colors only, so the fill is the brand red the rest of the site
+   already uses for filled elements, and the hover is the palette's existing darker
+   red (#d21419, the same shade .chat-head grades into).
+   The trailing letter-spacing on the last character would push the label
+   visually left inside a centred box; the extra left padding cancels it. */
+.quick-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+.quick-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 220px;
+  min-height: 58px;
+  padding: 0.75rem 1.25rem 0.75rem calc(1.25rem + 0.2em);
+  background: var(--brand-red);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.2em;
+  line-height: 1.2;
+  transition: background 0.2s ease;
+}
+.quick-link:hover { background: #d21419; color: #fff; text-decoration: none; }
+
+/* ---- Products index photo grid ---- */
+/* Live's Products index: two large photo tiles per row, each an underlined text link
+   under its photo, no card border and no blurb copy (that is what separates this from
+   .photo-card). This replaced a text-only pill list that had no photos at all. */
+.photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2.5rem; }
+.photo-grid-item { display: block; color: var(--brand-dark); }
+.photo-grid-item img { width: 100%; height: 300px; object-fit: cover; border-radius: var(--radius); }
+.photo-grid-label {
+  display: block;
+  margin-top: 0.85rem;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.photo-grid-item:hover { color: var(--brand-red); text-decoration: none; }
+.photo-grid-item:hover img { opacity: 0.92; }
+
+/* Scroll reveal. .reveal-armed is added by main.js, never by the markup: without JS
+   (or without IntersectionObserver) the class never lands and the tiles just render
+   normally, instead of being stuck at opacity 0 forever. The two tiles in a row cross
+   the threshold together, which is what produces live's two-at-a-time reveal; the
+   nth-child delay only staggers the pair slightly. */
+.photo-grid.reveal-armed .photo-grid-item {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.photo-grid.reveal-armed .photo-grid-item:nth-child(even) { transition-delay: 0.12s; }
+.photo-grid.reveal-armed .photo-grid-item.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .photo-grid.reveal-armed .photo-grid-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 .cta-band {
   background: var(--brand-dark);
@@ -332,6 +437,15 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 @media (max-width: 900px) {
   .section-with-image, .contact-section { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .photo-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .photo-grid-item img { height: 220px; }
+  /* Full-width stacked buttons rather than a 220px pill floating in a narrow column */
+  .quick-links { flex-direction: column; }
+  .quick-link { width: 100%; font-size: 1rem; letter-spacing: 0.15em; }
+  .page-banner-titlebox { padding: 1.25rem 1.5rem; }
+  .page-banner-plain { min-height: 200px; }
 }
 @media (max-width: 800px) {
   .nav-toggle { display: flex; }

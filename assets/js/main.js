@@ -97,3 +97,38 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   restart();
 });
+
+// ---- scroll reveal (Products index photo grid) ----
+// Runs immediately rather than on DOMContentLoaded: this script tag sits at the end of
+// <body>, so the grid is already parsed, and arming the hidden state here — before the
+// browser has painted — avoids a flash of fully-visible tiles that then snap back to
+// invisible.
+//
+// The hidden state lives behind .reveal-armed, which ONLY this code adds. If the script
+// never runs, or IntersectionObserver is missing, the class never lands and the tiles
+// render as ordinary visible content. Never move the opacity:0 into the unconditional
+// CSS — that turns a JS failure into an invisible page.
+(function () {
+  var groups = document.querySelectorAll("[data-reveal-group]");
+  if (!groups.length || !("IntersectionObserver" in window)) return;
+
+  var observer = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    // A row has to be meaningfully on screen before it animates, but not fully so —
+    // 18% fires as the row's top third clears the fold.
+    { threshold: 0.18, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  Array.prototype.forEach.call(groups, function (group) {
+    group.classList.add("reveal-armed");
+    Array.prototype.forEach.call(group.children, function (child) {
+      observer.observe(child);
+    });
+  });
+})();
