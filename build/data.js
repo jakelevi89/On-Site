@@ -145,13 +145,24 @@ PAGES.push({
       // Newport Beach project-photo showcase — live homepage has a captioned photo
       // gallery + "Check out our Hunter Douglas blinds in Newport Beach" teaser here,
       // reusing the same 4 photos as the hero slideshow (img_008-011).
-      type: "carousel",
+      //
+      // This was `type: "carousel"` (one photo at a time, arrows + dots) until
+      // 2026-08-08. That was simply the wrong component: live shows a "Find Us On"
+      // label inline with the Houzz badge and social buttons, then all four photos at
+      // once in a static grid. Same four photos, no slideshow.
+      type: "photoStrip",
       heading: "Check out our Hunter Douglas blinds in Newport Beach for custom solutions.",
       // Live site has a plain "Newport Beach" text link here — redesigned as a
       // proper pill CTA button per Jake, 2026-08-06 ("don't match it identically").
       cta: { label: "Newport Beach", href: "/service-areas/window-treatments-newport-beach" },
-      // "Find Us On" label above the photo strip, matching live (2026-08-08 fix pass).
-      galleryLabel: "Find Us On",
+      label: "Find Us On",
+      // Real badge art already in the repo (and in BRAND_FILES, so it can never leak
+      // into the photo pool) — the same marks the footer links to.
+      socials: [
+        { file: "img_016.jpg", alt: "Houzz", href: BUSINESS.social.houzz, wide: true },
+        { file: "img_006.png", alt: "Instagram", href: BUSINESS.social.instagram },
+        { file: "img_007.png", alt: "Facebook", href: BUSINESS.social.facebook },
+      ],
       images: [
         { file: "img_008.jpeg", alt: "Blue drapes with shades" },
         { file: "img_009.jpg", alt: "Blue and white drapes inside Newport Beach home" },
@@ -159,15 +170,16 @@ PAGES.push({
         { file: "img_011.jpeg", alt: "Banded shades inside Irvine home" },
       ],
     },
-    crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
-    crossLink("Check out our cleaning services:", CLEANING_LINKS),
-    crossLink("Check out our products page:", PRODUCT_LINKS),
     {
       // Manufacturer logo strip. The live site rotates two groups here; the clone
       // used to show a static 3 of the 7 brands. Group order matches the live
       // carousel exactly (2026-08-08 fix pass, item 4). img_129/130/131 were pulled
       // off the live site's second slide, which only mounts once the carousel
       // advances — hence they were missing from the original crawl.
+      //
+      // ORDER: this strip sits directly under the "Find Us On" photo grid and ABOVE
+      // the dark cross-link block, matching live. It was below the cross-links until
+      // 2026-08-08.
       type: "brandbar",
       groups: [
         [
@@ -187,6 +199,9 @@ PAGES.push({
         ],
       ],
     },
+    crossLink("Check out our service areas:", SERVICE_AREA_LINKS),
+    crossLink("Check out our cleaning services:", CLEANING_LINKS),
+    crossLink("Check out our products page:", PRODUCT_LINKS),
     {
       type: "cta",
       heading: "Ready to Upgrade Your Windows?",
@@ -412,6 +427,10 @@ PAGES.push({
   sections: [
     {
       type: "text",
+      // Pinned rather than auto-assigned: the hash-picked photo here was off-topic
+      // and the copy is short enough that the auto-photo gate would drop it (2026-08-08).
+      image: "img_051.webp",
+      imageAlt: "Hunter Douglas PowerView motorized shades controlled from a phone app",
       body: [
         "When it comes time to decide whether you want your [custom window treatments](/custom-window-treatments-orange-county) with a motorized operating system, convenience is a key consideration – but it is not the only one. Enhanced safety is another benefit. As is greater energy efficiency.",
         "Virtually every type of product can be outfitted with a motorized system – we offer the most innovative technology in the industry. The system appropriate for your custom window coverings depends mostly on the type of product you purchase. Some systems raise and lower [shades](/hunter-douglas-shades-blinds/roller-roman-shades) and adjust slats, vanes and louvers, while others move the window covering from side to side, rotating vanes and louvers. If a motor or remote ever stops responding, we also handle [motorization repairs](/hunter-douglas-blind-cleaning/orange-county).",
@@ -437,6 +456,10 @@ PAGES.push({
   sections: [
     {
       type: "text",
+      // Pinned rather than auto-assigned: the hash-picked photo here was off-topic
+      // and the copy is short enough that the auto-photo gate would drop it (2026-08-08).
+      image: "img_103.png",
+      imageAlt: "Sheer window shadings with soft fabric vanes filtering daylight",
       body: ["Sheer shades are innovative products that offer the privacy benefits of a window shade with the softening view of a sheer. Our sheer shades delicately filter incoming sunshine to create an inviting room ambiance. They also keep out harmful UV rays that can damage your furnishings and artwork. Pair them with [custom drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), add [PowerView® motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and keep them looking new with our [blind cleaning service](/hunter-douglas-blind-cleaning/orange-county)."],
     },
     {
@@ -447,6 +470,10 @@ PAGES.push({
     {
       type: "text",
       heading: "Luminette® — Privacy Sheers",
+      // Pinned: the hash-picked photo here was an exterior shot of a parked car outside
+      // an awning job — nothing to do with privacy sheers (Jake, 2026-08-08).
+      image: "img_120.jpg",
+      imageAlt: "Luminette privacy sheers drawn across a large window",
       body: ["Privacy with softened light. Enjoy subdued light and the privacy of soft draperies in Luminette® Privacy Sheers. Fabric vanes rotate for privacy while controlling the light in a room. Perfect for large windows and sliding glass doors, their superior UV protection meets both your decorating and practical needs."],
     },
     {
@@ -457,6 +484,10 @@ PAGES.push({
     {
       type: "text",
       heading: "Vignette® — Modern Roman Shades",
+      // Pinned: the auto-photo here was woven wood shades, which is a different product
+      // line and reads as a mislabelled example (Jake, 2026-08-08).
+      image: "img_109.jpg",
+      imageAlt: "Vignette modern Roman shade with soft horizontal folds",
       body: ["Simple, uncluttered, innovative. Luxurious fabrics and soft folds give Vignette® Modern Roman Shades a clean, crisp look, with the added benefit of enhanced child safety. Offered in semi-sheer, light-filtering and room-darkening fabrics, the range of styles and fold sizes help you create warm, inviting, beautiful windows."],
     },
   ],
@@ -471,6 +502,10 @@ PAGES.push({
   sections: [
     {
       type: "text",
+      // Pinned rather than auto-assigned: the hash-picked photo here was off-topic
+      // and the copy is short enough that the auto-photo gate would drop it (2026-08-08).
+      image: "img_086.jpg",
+      imageAlt: "Custom wood blinds in a sunlit dining room",
       body: ["Genuine Woods are made from Oak, Cherry and Pine and offer your home natural warmth. Complementing the styling of any room, these premium hardwood blinds feature an exclusive finish that provides longstanding protection against everyday wear. For a softer, more textured look, see our [woven woods & bamboo shades](/hunter-douglas-shades-blinds/woven-wood-bamboo); for effortless operation, ask about [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs). We also [clean and restore](/hunter-douglas-blind-cleaning/orange-county) wood blinds on-site."],
     },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
@@ -557,6 +592,10 @@ PAGES.push({
   sections: [
     {
       type: "text",
+      // Pinned rather than auto-assigned: the hash-picked photo here was off-topic
+      // and the copy is short enough that the auto-photo gate would drop it (2026-08-08).
+      image: "img_108.jpg",
+      imageAlt: "Woven wood and bamboo shade with natural reed texture",
       body: ["With unmatched style, selection and craftsmanship, Woven Wood Shades are perfect for today's casual lifestyle. Hand woven from all natural materials, these shades are uniquely textured and incredibly versatile. With the newest colors and weaves, you can bring the latest fashion to any room. Prefer a crisper, more traditional look? Compare them with our [wood & faux wood blinds](/hunter-douglas-shades-blinds/wood-blinds-orange-county), or add [drapery panels](/hunter-douglas-shades-blinds/drapery-top-treatments) for extra softness."],
     },
     { type: "cta", heading: "Don't wait! Call us today!", body: [BUSINESS.phone] },
@@ -737,7 +776,10 @@ PAGES.push({
   ],
 });
 
-function cityHub(city, path, intro, neighborhoods, subs) {
+// `image` pins the lead section's photo. Without it the photo is hash-picked from the
+// pool, which is fine for most cities but gave Newport Beach a blown-out phone-in-hand
+// shot that cropped to near-white and read as an empty column (Jake, 2026-08-08).
+function cityHub(city, path, intro, neighborhoods, subs, image) {
   PAGES.push({
     path,
     // Live tab title for these hub pages is the short "<City> | On-Site Custom Drapes
@@ -748,7 +790,7 @@ function cityHub(city, path, intro, neighborhoods, subs) {
     nav: "Service Areas",
     h1: `Window Treatments & Blinds in ${city} | Custom Shades & Shutters`,
     sections: [
-      { type: "text", body: [intro] },
+      { type: "text", body: [intro], image, imageAlt: image ? `Custom window treatments in ${city}` : undefined },
       { type: "pins", heading: `Neighborhoods We Serve in ${city}`, items: neighborhoods },
       {
         type: "linkgrid",
@@ -773,7 +815,8 @@ cityHub(
     { label: "Hunter Douglas Window Treatments", href: "/service-areas/window-treatments-newport-beach/hunter-douglas" },
     { label: "Window Shades & Blinds", href: "/service-areas/window-treatments-newport-beach/shades-and-blinds" },
     { label: "Motorized Blinds & Smart Shades", href: "/service-areas/window-treatments-newport-beach/motorized-blinds" },
-  ]
+  ],
+  "img_100.jpg"
 );
 
 cityHub(
@@ -1061,7 +1104,17 @@ PAGES.push({
     {
       type: "bloglist",
       items: [
-        { title: "5 Things to Consider Before Buying New Blinds or Shades", date: "Mar 26, 2025", href: "/post/buying-new-blinds-or-shades-orange-county", excerpt: "Expert guidance on upgrading your window treatments, with five key tips for Orange County residents planning purchases." },
+        // Lead card carries a photo, matching live (its featured post card is the one
+        // with an image). The other three are text-only by design — adding `image` to
+        // any of them turns them into featured cards too.
+        {
+          title: "5 Things to Consider Before Buying New Blinds or Shades",
+          date: "Mar 26, 2025",
+          href: "/post/buying-new-blinds-or-shades-orange-county",
+          excerpt: "Expert guidance on upgrading your window treatments, with five key tips for Orange County residents planning purchases.",
+          image: "img_057.jpeg",
+          imageAlt: "Living room layered with custom shades and drapery",
+        },
         { title: "How Often Should You Clean Hunter Douglas Blinds & Drapes?", date: "Mar 19, 2025", href: "/post/hunter-douglas-blind-cleaning-tips-orange-county", excerpt: "Blinds and drapery add style, privacy, and light control to any home, but over time they accumulate dust and allergens." },
         { title: "Why Newport Beach Homeowners Are Upgrading to Hunter Douglas Shades", date: "Mar 16, 2025", href: "/post/why-newport-beach-homeowners-are-upgrading-to-hunter-douglas-shades", excerpt: "Why luxury homeowners in Newport Beach are choosing Hunter Douglas products for their high-end interiors." },
         { title: "Trending Window Treatment Styles for 2025 | Orange County", date: "Feb 22, 2025", href: "/post/trending-window-treatment-styles-for-2025-orange-county", excerpt: "Current design trends including smart shades and custom drapery elevating Orange County homes." },

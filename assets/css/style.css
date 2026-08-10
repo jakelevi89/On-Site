@@ -258,6 +258,13 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 .blog-card { display: block; padding: 1.5rem; background: var(--bg-alt); border-radius: var(--radius); border: 1px solid var(--border); color: var(--text-main); }
 .blog-card:hover { border-color: var(--brand-red); text-decoration: none; }
 .blog-card h3 { color: var(--brand-dark); }
+/* Featured (lead) blog card: photo above the title. The padding moves to an inner
+   inset so the image can run edge to edge inside the card's rounded border. */
+.blog-card-featured { padding: 0; overflow: hidden; }
+.blog-card-featured img { width: 100%; height: 200px; object-fit: cover; display: block; }
+.blog-card-featured h3, .blog-card-featured p { padding-left: 1.5rem; padding-right: 1.5rem; }
+.blog-card-featured h3 { margin-top: 1.25rem; }
+.blog-card-featured p:last-child { padding-bottom: 1.5rem; }
 .blog-date { color: var(--text-light); font-size: 0.85rem; margin-bottom: 0.5rem; }
 
 .contact-section { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; }
@@ -332,73 +339,58 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   .hero-sub { font-size: 1.05rem; }
 }
 
-/* ---- rotating image carousel (homepage) ---- */
-.carousel-label {
-  text-align: center;
+/* ---- "Find Us On" row + static photo strip (homepage) ----
+   Replaced a rotating carousel on 2026-08-08. Live puts the "Find Us On" label inline
+   with the Houzz badge and the social buttons, then shows all four photos at once in a
+   plain grid — no slideshow, no arrows, no dots. */
+.find-us {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin: 0 0 1.5rem;
+}
+.find-us-label {
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: var(--brand-dark);
-  margin: 0 0 1rem;
+  margin: 0 0.75rem 0 0;
 }
-.carousel {
-  position: relative;
-  max-width: 860px;
-  margin: 0 auto;
-  border-radius: 8px;
+.find-us-badge {
+  display: block;
+  line-height: 0;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.carousel-track { position: relative; aspect-ratio: 16 / 10; background: #1c2424; }
-.carousel-slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.6s ease;
+.find-us-badge img {
+  height: 38px;
+  width: auto;
+  display: block;
 }
-.carousel-slide.active { opacity: 1; }
-.carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(46, 56, 56, 0.55);
-  color: #fff;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  z-index: 2;
+/* The Houzz badge carries a wordmark, so it needs more room than the square
+   Instagram/Facebook tiles beside it — matching live, where it is the largest mark. */
+.find-us-badge-wide img { height: 46px; }
+.find-us-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); }
+
+.photo-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
-.carousel-arrow:hover { background: rgba(243, 27, 32, 0.85); }
-.carousel-prev { left: 12px; }
-.carousel-next { right: 12px; }
-.carousel-dots {
-  position: absolute;
-  bottom: 12px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  z-index: 2;
+.photo-strip img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
 }
-.carousel-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.55);
-  cursor: pointer;
-  padding: 0;
-  transition: background 0.2s, transform 0.2s;
-}
-.carousel-dot.active { background: #f31b20; transform: scale(1.2); }
 @media (max-width: 800px) {
-  .carousel-arrow { width: 34px; height: 34px; font-size: 0.9rem; }
+  .photo-strip { grid-template-columns: repeat(2, 1fr); }
+  .photo-strip img { height: 160px; }
+  .find-us-label { font-size: 1.25rem; margin-right: 0; }
 }
 
 /* ---- brand logo strip ---- */
@@ -425,10 +417,18 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 /* Rotating groups of brand logos (live site cycles 4 then 3). Slides are stacked in
    one grid cell rather than absolutely positioned, so the strip's height is the
    tallest group and the page never reflows as it rotates. With JS off, only the
-   first group is `active` and it still shows real logos. */
-.brand-bar-rotator { display: grid; }
+   first group is `active` and it still shows real logos.
+
+   Centering is pinned explicitly here: the track is forced to a single full-width
+   minmax(0,1fr) column and every slide is stretched to fill it, so a group centers on
+   the page no matter how many logos it holds. Left to `display:grid` alone the track is
+   auto-sized, which centers the 4-logo group and the 3-logo group differently the
+   moment the container stops being wider than the widest slide. */
+.brand-bar-rotator { display: grid; grid-template-columns: minmax(0, 1fr); }
 .brand-bar-slide {
   grid-area: 1 / 1;
+  width: 100%;
+  justify-self: stretch;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s ease;
