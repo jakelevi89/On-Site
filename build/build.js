@@ -485,6 +485,10 @@ function renderPage(page) {
   // `heroImage` pins a page's banner to a specific file. Without it the banner is
   // whatever HERO_POOL happens to hash to, which is fine for most pages but produced
   // the logo-on-grey Cleaning banner — pin the banner wherever the choice matters.
+  // `noHero: true` skips the banner section entirely (see heroBlock below) — for
+  // pages where live has no banner photo at all (confirmed by screenshot: Our Work,
+  // Accessibility Statement, Blog index, all 4 blog posts). heroImg is unused in
+  // that case but computing it unconditionally keeps this block simple.
   const heroImg = page.heroImage
     ? u("/assets/images/" + page.heroImage)
     : page.home
@@ -521,6 +525,11 @@ function renderPage(page) {
           <a class="btn btn-dark" href="${u("/custom-window-treatments-orange-county")}">Learn More</a>
         </div>
       </section>`
+    : page.noHero
+    ? `<div class="page-title-plain">
+        ${page.postMeta ? `<p class="post-meta">${esc(page.postMeta.date)} &middot; ${esc(page.postMeta.readTime)}</p>` : ""}
+        <h1>${esc(page.h1)}</h1>
+      </div>`
     : `<section class="page-banner" style="background-image:url('${heroImg}')">
         <div class="page-banner-inner">
           <h1>${esc(page.h1)}</h1>

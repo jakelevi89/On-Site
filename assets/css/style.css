@@ -177,6 +177,19 @@ p { margin: 0 0 1rem; }
   width: 100%;
 }
 .page-banner-inner h1 { color: #fff; }
+
+/* Plain-text page title — used where live has no banner photo at all, via `noHero: true`
+   in build/data.js (Our Work, Accessibility Statement, the Blog index, all 4 blog posts).
+   `main` already supplies the max-width and 1.5rem side padding, so this only has to
+   restore the vertical rhythm the .page-banner box used to provide: with no padding the
+   h1 butts straight up against the nav. Deliberately NOT a 260px min-height band like
+   .page-banner — live shows just the title text, no full-bleed box. */
+.page-title-plain { padding: 2.5rem 0 0.5rem; }
+.page-title-plain h1 { margin-bottom: 0; }
+/* .post-meta is white-on-photo inside a banner; on white it needs a real muted colour
+   rather than 0.85 opacity of the body text, and it sits ABOVE the h1 here. */
+.page-title-plain .post-meta { opacity: 1; color: var(--text-light); margin: 0 0 0.4rem; }
+
 .post-meta { opacity: 0.85; font-size: 0.9rem; }
 .phone-pill {
   display: inline-block;
