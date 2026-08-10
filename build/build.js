@@ -433,7 +433,14 @@ function renderSection(section, pageSeed, idx) {
             <img src="${u("/assets/images/" + i.file)}" alt="${esc(i.alt || i.label)}" loading="lazy">
             <span class="photo-card-label">${esc(i.label)}</span>
           </a>`
-                : `<a class="link-card" href="${u(i.href)}">${esc(i.label)}</a>`
+                : i.href
+                ? `<a class="link-card" href="${u(i.href)}">${esc(i.label)}</a>`
+                : // An item with no `href` renders as a plain, unclickable card. Live's
+                  // hand-curated /service-areas cross-link block leaves three of its
+                  // entries as bare text with no anchor (Roller/Roman/Banded, Wood
+                  // Blinds, Drapery Cleaning) — almost certainly a live authoring slip,
+                  // but it is what live ships, so the clone reproduces it.
+                  `<span class="link-card link-card-plain">${esc(i.label)}</span>`
             )
             .join("\n          ")}
         </div>

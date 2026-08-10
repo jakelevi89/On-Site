@@ -263,6 +263,8 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
   border: 1px solid var(--border);
 }
 .link-card:hover { border-color: var(--brand-red); color: var(--brand-red); text-decoration: none; }
+/* Cross-link entries live ships without an anchor. Same card, no hover affordance. */
+.link-card-plain { color: var(--text-light); font-weight: 600; cursor: default; }
 
 /* Large clickable photo cards — the Cleaning landing pair and the Service Areas
    city cards. Two-up on the Cleaning page, four-up on Service Areas; auto-fit

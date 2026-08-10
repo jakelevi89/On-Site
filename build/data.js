@@ -7,7 +7,9 @@ const BUSINESS = {
   phoneHref: "tel:+19497708989",
   email: "sales@on-sitespecialists.com",
   address: "23452 Peralta Dr STE A, Laguna Hills, CA 92653",
-  serviceAreaShort: "Orange County - San Diego - Los Angeles",
+  // Live's order, verified on /contact-us 2026-08-10 (was Orange County first here).
+  // Note this string also feeds the footer's service-area line.
+  serviceAreaShort: "San Diego - Orange County - Los Angeles",
   social: {
     // Real profile URLs pulled from the live Wix site footer (2026-07-22)
     facebook: "https://www.facebook.com/drapesandblindcleaning/",
@@ -226,9 +228,12 @@ PAGES.push({
   // Pinned (2026-08-10 photo audit).
   heroImage: "img_019.jpg",
   sections: [
+    // Live's order is: banner -> the "Founded over 20 years ago" paragraph -> the
+    // "Who We Are" heading -> the "As a Hunter Douglas Dealer" paragraph. The heading
+    // sits BETWEEN the two paragraphs, so they are two sections here, not one block
+    // with a heading on top (2026-08-10 parity pass).
     {
       type: "text",
-      heading: "Who We Are",
       // Pinned. This slot used to auto-assign from PHOTO_POOL and drew img_122, the
       // Huntington Beach pier — a stock-looking travel photo next to the company
       // story. A room showing the actual product belongs here, and pinning keeps it
@@ -239,6 +244,13 @@ PAGES.push({
       // Inline anchor targets copied from the live page (2026-08-08 fix pass, item 5).
       body: [
         "Founded over 20 years ago, On-Site Custom Drapes & Blinds has become a leader in [custom window treatments](/custom-window-treatments-orange-county), [motorized blinds](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and professional [drapery & blind cleaning](/hunter-douglas-blind-cleaning). We proudly serve Orange County, Los Angeles, San Diego, and surrounding Southern California cities, offering high-quality window solutions for residential and commercial spaces.",
+      ],
+    },
+    {
+      type: "text",
+      heading: "Who We Are",
+      noImage: true,
+      body: [
         "As a [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) Dealer and [Certified Cleaner](/hunter-douglas-blind-cleaning), we specialize in custom blinds, [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), and [motorized window treatments](/hunter-douglas-shades-blinds/motorized-blinds-repairs) tailored to your style and needs.",
       ],
     },
@@ -265,6 +277,10 @@ PAGES.push({
     {
       type: "text",
       heading: "Meet Our Team",
+      // Explicit: splitting the Who We Are block above added a section, which moved
+      // this one from an odd to an even index and would otherwise have handed it an
+      // automatic alternating photo it never had. Live has no photo here.
+      noImage: true,
       body: ["Our expert team is professionally trained in [window treatment](/custom-window-treatments-orange-county) applications, [motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and [cleaning techniques](/hunter-douglas-blind-cleaning). Whether you're purchasing new blinds & [custom drapery](/hunter-douglas-shades-blinds/drapery-top-treatments) or cleaning & maintaining your existing treatments, we ensure the highest level of precision and care.", "Every design solution is tailored to match your space, style, and budget. We prioritize exceptional customer service, competitive pricing, and on-time scheduling to make your experience seamless."],
     },
     {
@@ -895,9 +911,17 @@ PAGES.push({
     {
       type: "text",
       noImage: true,
+      // Verbatim from live, 2026-08-10 parity pass. The previous copy was a
+      // paraphrase: it restructured both sentences, dropped "and beyond", dropped
+      // "Click on your city below to learn more about our services in your area",
+      // and dropped "we serve all of Orange County, Los Angeles and San Diego".
+      // Inline links are live's exact set too — live links "custom window
+      // treatments" and "motorized" in para 1 (NOT "drapery", NOT the full phrase
+      // "motorized smart shades"), and "custom window treatment" plus the four city
+      // names in para 2. "contact us" is plain text on live; it used to be a link here.
       body: [
-        "At On-Site Custom Drapes & Blinds, we proudly serve homeowners across Orange County, San Diego, and Los Angeles with [custom window treatments](/custom-window-treatments-orange-county), including blinds, shades, shutters, and [drapery](/hunter-douglas-shades-blinds/drapery-top-treatments). We offer [motorized smart shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs), plantation shutters, and elegant drapery with expert design consultation and professional installation services.",
-        "We provide [custom window treatment](/hunter-douglas-shades-blinds) services in many cities across Southern California, including [Newport Beach](/service-areas/window-treatments-newport-beach), [Irvine](/service-areas/drapes-and-blinds-irvine), [Laguna Beach](/service-areas/window-treatments-laguna-beach) and [Huntington Beach](/service-areas/window-treatments-huntington-beach) — if you don't see your specific city listed, [contact us](/contact-us)!",
+        "At On-Site Custom Drapes & Blinds, we proudly serve homeowners across Orange County, San Diego, and Los Angeles with [custom window treatments](/custom-window-treatments-orange-county), including blinds, shades, shutters, and drapery. Whether you're looking for [motorized](/hunter-douglas-shades-blinds/motorized-blinds-repairs) smart shades, classic plantation shutters, or elegant drapery, we offer expert design consultation and professional installation.",
+        "We provide [custom window treatment](/hunter-douglas-shades-blinds) services in many cities across Southern California, including [Newport Beach](/service-areas/window-treatments-newport-beach), [Irvine](/service-areas/drapes-and-blinds-irvine), [Laguna Beach](/service-areas/window-treatments-laguna-beach), [Huntington Beach](/service-areas/window-treatments-huntington-beach), and beyond. Click on your city below to learn more about our services in your area. If you don't see your city listed, contact us—we serve all of Orange County, Los Angeles and San Diego!",
       ],
     },
     {
@@ -912,12 +936,36 @@ PAGES.push({
         { label: "Irvine", href: "/service-areas/drapes-and-blinds-irvine", file: "img_123.jpg", alt: "Irvine Spectrum" },
       ],
     },
-    crossLink("Check out our products page:", PRODUCT_LINKS),
-    crossLink("Check out our cleaning services:", CLEANING_LINKS),
+    // NOT the shared crossLink() constants. Live hand-curates this page's bottom
+    // block: different wording from the homepage's list ("Sheer Shades" not "Sheer
+    // Shades & Silhouettes", "Woven Woods" not "Woven Woods & Bamboo Shades",
+    // "Motorization" not "Blind Motorization"), a different order, and three entries
+    // that live ships as bare text with no anchor at all. Verified against live's DOM
+    // 2026-08-10. Do not collapse this back into crossLink(PRODUCT_LINKS).
+    crossLink("Check out our products page:", [
+      { label: "Sheer Shades", href: "/hunter-douglas-shades-blinds/sheer-shades" },
+      { label: "Drapery and Top Treatments", href: "/hunter-douglas-shades-blinds/drapery-top-treatments" },
+      { label: "Woven Woods", href: "/hunter-douglas-shades-blinds/woven-wood-bamboo" },
+      { label: "Custom Window Treatments", href: "/custom-window-treatments-orange-county" },
+      { label: "Roller, Roman and Banded Shades" }, // no href on live
+      { label: "Wood Blinds" }, // no href on live
+      // FLAGGED FOR JAKE (2026-08-10): live's "Motorization" entry points at
+      // /hunter-douglas-shades-blinds/woven-wood-bamboo — the Woven Woods page, not
+      // the motorization page. That reads as a live authoring mistake rather than
+      // intent, so the clone points it at the page the label promises. Change this
+      // line if the decision is to mirror live's broken target exactly.
+      { label: "Motorization", href: "/hunter-douglas-shades-blinds/motorized-blinds-repairs" },
+    ]),
+    crossLink("Check out our cleaning services:", [
+      { label: "Blind Cleaning", href: "/hunter-douglas-blind-cleaning/orange-county" },
+      { label: "Drapery Cleaning" }, // no href on live
+    ]),
     crossLink("Check out our blog for inspiration:", BLOG_LINKS),
   ],
 });
 
+// `intro` is an array of paragraphs (live runs two on the city hubs) or a single
+// string for the cities not yet copy-verified against live.
 // `image` pins the lead section's photo. Without it the photo is hash-picked from the
 // pool, which is fine for most cities but gave Newport Beach a blown-out phone-in-hand
 // shot that cropped to near-white and read as an empty column (Jake, 2026-08-08).
@@ -936,11 +984,12 @@ function cityHub(city, path, intro, neighborhoods, subs, image) {
     noHero: true,
     sections: [
       // The 2026-08-10 photo audit found live has no section[0] photo on any of the 4
-      // hubs. Only Newport Beach carries a pin here, added 2026-08-08 because its
-      // hash-picked photo was a blown-out phone-in-hand shot that cropped to near-white
-      // (Jake). An explicit pin wins; the other 3 hubs take the audit's finding rather
-      // than falling back to a hash photo live doesn't have.
-      { type: "text", body: [intro], image, imageAlt: image ? `Custom window treatments in ${city}` : undefined, noImage: !image },
+      // hubs, and no hub carries a pin any more. Newport Beach used to: img_100.jpg was
+      // pinned 2026-08-08 because the hash-picked photo before it was a blown-out
+      // phone-in-hand shot that cropped to near-white (Jake). The 2026-08-10 parity
+      // review then read that pin as a blank image column, which agrees with the photo
+      // audit — live has nothing there. Pin removed; all 4 hubs are now text-only.
+      { type: "text", body: Array.isArray(intro) ? intro : [intro], image, imageAlt: image ? `Custom window treatments in ${city}` : undefined, noImage: !image },
       { type: "pins", heading: `Neighborhoods We Serve in ${city}`, items: neighborhoods },
       {
         type: "linkgrid",
@@ -958,15 +1007,25 @@ function cityHub(city, path, intro, neighborhoods, subs, image) {
 cityHub(
   "Newport Beach",
   "/service-areas/window-treatments-newport-beach",
-  "At On-Site Custom Drapes & Blinds, we specialize in premium [window treatments](/service-areas/window-treatments-newport-beach/custom-treatments) in Newport Beach, offering custom blinds, shades, shutters, and [motorized smart shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs) to complement your home's style. Whether you're looking for light-filtering [sheer shades](/hunter-douglas-shades-blinds/sheer-shades), energy-efficient blinds, or luxury [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) window coverings, our team provides expert design consultation, top-quality products, and professional installation. We proudly serve homeowners throughout Newport Beach, Balboa Island, Corona Del Mar, Crystal Cove, and the surrounding coastal communities, and we also handle [blind & drapery cleaning](/hunter-douglas-blind-cleaning) here.",
+  // Verbatim from live, 2026-08-10 parity pass. The previous copy merged live's two
+  // paragraphs into one, invented a closing clause about blind & drapery cleaning that
+  // live does not have, and carried five inline links where live has two: live links
+  // only "motorized smart shades" (para 1) and "window treatment" (para 2).
+  [
+    "At On-Site Custom Drapes & Blinds, we specialize in premium window treatments in Newport Beach, offering custom blinds, shades, shutters, and [motorized smart shades](/hunter-douglas-shades-blinds/motorized-blinds-repairs) to complement your home's style. Whether you're looking for light-filtering shades, energy-efficient blinds, or luxury window coverings, our team provides expert design consultation, top-quality products, and professional installation.",
+    "We proudly serve homeowners throughout Newport Beach, Balboa Island, Corona Del Mar, Crystal Cove, and the surrounding coastal communities. Explore our [window treatment](/service-areas/window-treatments-newport-beach/custom-treatments) services below to find the perfect fit for your home.",
+  ],
   ["Corona Del Mar", "Balboa Island & Balboa Peninsula", "Crystal Cove & Newport Coast", "East Bluff & Lido Isle", "Back Bay & Mariners Mile"],
   [
     { label: "Custom Window Treatments", href: "/service-areas/window-treatments-newport-beach/custom-treatments" },
     { label: "Hunter Douglas Window Treatments", href: "/service-areas/window-treatments-newport-beach/hunter-douglas" },
     { label: "Window Shades & Blinds", href: "/service-areas/window-treatments-newport-beach/shades-and-blinds" },
     { label: "Motorized Blinds & Smart Shades", href: "/service-areas/window-treatments-newport-beach/motorized-blinds" },
-  ],
-  "img_100.jpg"
+  ]
+  // No image pin. See the cityHub section[0] comment: two independent passes found
+  // live has no photo beside this intro, and the 08-08 pin (img_100.jpg) was what the
+  // 2026-08-10 review saw as a blank/empty image column. noImage collapses the row to
+  // single-column full-width text, which is what live shows.
 );
 
 cityHub(
