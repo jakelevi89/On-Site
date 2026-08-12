@@ -145,9 +145,6 @@ PAGES.push({
       body: [
         "At On-Site Specialists, we take pride in our expert [drapery cleaning](/hunter-douglas-blind-cleaning/drapery-orange-county) and [blind cleaning](/hunter-douglas-blind-cleaning/orange-county) services. [Hunter Douglas](/service-areas/window-treatments-newport-beach/hunter-douglas) refers our method of cleaning to their clients, recognizing our expertise in blind and drapery cleaning. We use the Injection-Extraction method—an advanced, eco-friendly cleaning technique that effectively removes dust, allergens, and stains while preserving fabric integrity. Our specialized process extends the life of your window treatments, ensuring they remain fresh, spotless, and like new. With meticulous attention to detail and a commitment to excellence, we provide professional, on-site cleaning without the hassle of removal, keeping your home or business looking its best.",
       ],
-      // Standalone "Free Consult" button under this paragraph, matching live
-      // (2026-08-08 fix pass — was missing entirely).
-      buttonCta: { label: "Free Consult", href: "/contact-us" },
     },
     {
       // Newport Beach project-photo showcase — live homepage has a captioned photo
@@ -553,8 +550,8 @@ PAGES.push({
       type: "text",
       // Pinned rather than auto-assigned: the hash-picked photo here was off-topic
       // and the copy is short enough that the auto-photo gate would drop it (2026-08-08).
-      image: "img_103.png",
-      imageAlt: "Sheer window shadings with soft fabric vanes filtering daylight",
+      image: "img_132.jpg",
+      imageAlt: "Silhouette window shadings with soft fabric vanes filtering daylight over a dining room",
       body: ["Sheer shades are innovative products that offer the privacy benefits of a window shade with the softening view of a sheer. Our sheer shades delicately filter incoming sunshine to create an inviting room ambiance. They also keep out harmful UV rays that can damage your furnishings and artwork. Pair them with [custom drapery](/hunter-douglas-shades-blinds/drapery-top-treatments), add [PowerView® motorization](/hunter-douglas-shades-blinds/motorized-blinds-repairs), and keep them looking new with our [blind cleaning service](/hunter-douglas-blind-cleaning/orange-county)."],
     },
     {
@@ -567,8 +564,8 @@ PAGES.push({
       heading: "Luminette® — Privacy Sheers",
       // Pinned: the hash-picked photo here was an exterior shot of a parked car outside
       // an awning job — nothing to do with privacy sheers (Jake, 2026-08-08).
-      image: "img_120.jpg",
-      imageAlt: "Luminette privacy sheers drawn across a large window",
+      image: "img_133.jpg",
+      imageAlt: "Luminette privacy sheers drawn across a bright bedroom window",
       body: ["Privacy with softened light. Enjoy subdued light and the privacy of soft draperies in Luminette® Privacy Sheers. Fabric vanes rotate for privacy while controlling the light in a room. Perfect for large windows and sliding glass doors, their superior UV protection meets both your decorating and practical needs."],
     },
     {
