@@ -37,8 +37,11 @@ const ALLOWED_ORIGINS = [
   'https://www.on-sitespecialists.com',
   'https://on-sitespecialists.com',
   'https://jakelevi89.github.io',
-  // Add the real Cloudflare Pages subdomain here once the project exists, e.g.
-  // 'https://on-site.pages.dev' - a missing entry returns 403 to the browser.
+  // The Cloudflare Pages project, created 2026-08-12. Without this entry the widget
+  // 403s on the staging URL, which is the one place it gets tested before go-live.
+  // Per-deployment preview URLs (<hash>.on-site.pages.dev) are NOT covered by this
+  // exact-match list - test the chat on the project URL above, not a preview link.
+  'https://on-site.pages.dev',
 ];
 
 const MAX_TURNS = 12;          // messages (user+assistant) kept per conversation
