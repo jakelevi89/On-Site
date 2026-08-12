@@ -61,6 +61,43 @@ concern.
 Same idea as Cloudflare Pages: netlify.com → **Add new site → Import an existing project** →
 connect GitHub → pick this repo → build command blank, publish directory `/`.
 
+## Current deployment (as of 2026-08-12)
+
+Option A is the one that actually happened. State of play:
+
+| Thing | Value |
+|---|---|
+| Cloudflare Pages project | `on-site` |
+| Staging URL | https://on-site.pages.dev |
+| Production branch | `main` (build command blank, output = repo root) |
+| Cloudflare zone | `on-sitespecialists.com` — **pending**, not yet active |
+| Cloudflare nameservers | `apollo.ns.cloudflare.com`, `maleah.ns.cloudflare.com` |
+| Registrar / current DNS host | GoDaddy (registrar) → nameservers still point at Wix (`ns12`/`ns13.wixdns.net`) |
+
+The pages are built for the **domain root**, not the `/On-Site/` GitHub Pages subpath. Rebuild
+with `BASE_PATH= node build/build.js` — a plain `node build/build.js` re-adds the `/On-Site`
+prefix and will break every link and asset on the real domain.
+
+**Custom domains cannot be attached until the zone is active**, i.e. not until the nameservers
+are actually switched at GoDaddy. That step happens right after the cutover, not before it.
+
+### Environment variables — NONE are set yet
+
+Nothing in the Pages project's Settings → Environment variables. Until they are set:
+
+| Variable | Used by | Symptom while unset |
+|---|---|---|
+| `RESEND_API_KEY` | `/api/lead` | Forms return 503; visitor is shown the phone number. **Leads are not delivered.** |
+| `ONSITE_OPEN_AI_API_KEY` | `/api/chat` | Chat widget returns 503 "not configured". |
+
+### Sender domain for the forms
+
+`on-sitespecialists.com` cannot be verified in Resend before the cutover — verification needs
+DKIM records on whatever nameservers are authoritative, and that is still Wix. The pre-cutover
+plan is to verify a subdomain of an already-Cloudflare-managed domain
+(`leads.rapidlendingsolutions.net`) and point `LEAD_FROM` at it, keeping `LEAD_TO` as
+`sales@on-sitespecialists.com`. Switch `LEAD_FROM` to the real domain once it is live.
+
 ## Contact forms
 
 There are **two** forms and they are deliberately kept separate — which one a lead used is a real
