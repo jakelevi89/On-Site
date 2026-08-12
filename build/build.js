@@ -16,6 +16,15 @@ function u(p) {
   return BASE + p;
 }
 
+// ---- form spam honeypot ----
+// A field real visitors never see and never fill, but bots fill every input they
+// find. functions/api/lead.js drops any submission where "company" has a value.
+// Hidden with off-screen positioning rather than display:none or type="hidden",
+// because the crude bots this is aimed at skip both of those. tabindex=-1 and
+// aria-hidden keep it out of keyboard and screen-reader flow, and autocomplete=off
+// stops browsers helpfully filling it in for a real person.
+const HONEYPOT = `<p class="form-hp" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></p>`;
+
 // ---- image manifest ----
 // manifest.txt lines: "img_000.png\t<original wix url>"
 const manifestPath = path.join(IMAGES_DIR, "manifest.txt");
@@ -506,10 +515,18 @@ function renderSection(section, pageSeed, idx) {
       </section>`;
     }
     case "contactForm": {
-      // DEV NOTE (source only — never render this to visitors): these forms have no
-      // backend yet and must be wired to Formspree/Netlify Forms before launch. See
-      // README "Contact form". The old visible "this form needs to be connected..."
-      // placeholder line was removed 2026-08-06 — it was showing to real site visitors.
+      // DEV NOTE (source only — never render this to visitors). The old visible
+      // "this form needs to be connected..." placeholder line was removed 2026-08-06
+      // — it was showing to real site visitors.
+      //
+      // Both forms POST to the /api/lead Pages Function (functions/api/lead.js), which
+      // emails them to sales@on-sitespecialists.com via Resend. `action` + `method` are
+      // real so the form still submits with JavaScript off; main.js upgrades it to a
+      // fetch with inline status messages when JS is available.
+      //
+      // `formType` is what keeps this lead distinguishable from the Cleaning quick
+      // form in the inbox — the page a lead came from is a real intent signal. Do not
+      // drop it, and do not merge the two forms.
       return `<section class="section contact-section">
         <div class="contact-info">
           ${section.body.map((p) => `<p class="lead">${rich(p)}</p>`).join("")}
@@ -517,13 +534,16 @@ function renderSection(section, pageSeed, idx) {
           <p><strong>Email:</strong> <a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a></p>
           <p><strong>Service Areas:</strong> ${esc(BUSINESS.serviceAreaShort)}</p>
         </div>
-        <form class="contact-form" name="contact" method="POST" data-static-form>
-          <label>Name<input type="text" name="name" required></label>
-          <label>Email<input type="email" name="email" required></label>
-          <label>Phone<input type="tel" name="phone"></label>
+        <form class="contact-form" name="contact" method="POST" action="/api/lead" data-lead-form>
+          <input type="hidden" name="formType" value="contact">
+          ${HONEYPOT}
+          <label>Name<input type="text" name="name" autocomplete="name" required></label>
+          <label>Email<input type="email" name="email" autocomplete="email" required></label>
+          <label>Phone<input type="tel" name="phone" autocomplete="tel"></label>
           <label>Where did you hear about us?<input type="text" name="referral"></label>
           <label>Message<textarea name="message" rows="4"></textarea></label>
           <button type="submit" class="btn btn-accent">Send</button>
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
         </form>
       </section>`;
     }
@@ -536,11 +556,14 @@ function renderSection(section, pageSeed, idx) {
           ${section.heading ? `<h2>${esc(section.heading)}</h2>` : ""}
           ${section.intro ? `<p class="lead">${rich(section.intro)}</p>` : ""}
         </div>
-        <form class="contact-form" name="cleaning-quick-form" method="POST" data-static-form>
-          <label>First Name<input type="text" name="firstName" required></label>
-          <label>Last Name<input type="text" name="lastName" required></label>
-          <label>Email<input type="email" name="email" required></label>
+        <form class="contact-form" name="cleaning-quick-form" method="POST" action="/api/lead" data-lead-form>
+          <input type="hidden" name="formType" value="cleaning-quick">
+          ${HONEYPOT}
+          <label>First Name<input type="text" name="firstName" autocomplete="given-name" required></label>
+          <label>Last Name<input type="text" name="lastName" autocomplete="family-name" required></label>
+          <label>Email<input type="email" name="email" autocomplete="email" required></label>
           <button type="submit" class="btn btn-accent">Send</button>
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
         </form>
       </section>`;
     }

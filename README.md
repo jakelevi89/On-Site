@@ -61,22 +61,41 @@ concern.
 Same idea as Cloudflare Pages: netlify.com → **Add new site → Import an existing project** →
 connect GitHub → pick this repo → build command blank, publish directory `/`.
 
-## Contact form
+## Contact forms
 
-The contact form on `/contact-us` is currently a static HTML form with no backend — submitting it
-just shows a reminder message. Wix handled form emails automatically; a static site needs a small
-free service wired in instead. The easiest options:
+There are **two** forms and they are deliberately kept separate — which one a lead used is a real
+intent signal (Cleaning quick form = an existing-treatments cleaning job; Contact Us = usually a
+new-treatments quote). Do not merge them.
 
-- [Formspree](https://formspree.io) (free tier: 50 submissions/month) — sign up, get a form
-  endpoint URL, and change the `<form>` tag's `action` attribute in
-  `hunter-douglas-blind-cleaning`... err, in `contact-us/index.html` (or in `build/data.js`'s
-  `contactForm` section renderer in `build.js`) to point at it.
-- Netlify Forms (free, built in, if you host on Netlify) — just add `netlify` as a form attribute.
-- Cloudflare Pages Forms via a small Worker (a bit more setup, but free and keeps everything in
-  Cloudflare).
+| Form | Page | Fields | `formType` |
+|---|---|---|---|
+| Contact Us | `/contact-us` | Name, Email, Phone, Referral, Message | `contact` |
+| Cleaning Quick Form | `/hunter-douglas-blind-cleaning` | First Name, Last Name, Email | `cleaning-quick` |
 
-Until this is connected, keep the real phone number and email prominent on the site (they already
-are) so customers can still reach you directly.
+Both POST to **`/api/lead`** (`functions/api/lead.js`), a Cloudflare Pages Function that emails the
+submission to `sales@on-sitespecialists.com` (ImprovMX forwards that to the Gmail inbox) via
+[Resend](https://resend.com). The subject line names the form, so the two stay sortable.
+
+The `<form>` has a real `action`/`method`, so it still works with JavaScript off — the Function
+replies with a plain thank-you page. With JS on, `assets/js/main.js` upgrades it to a `fetch` and
+shows an inline status message instead of navigating away. Spam is filtered by an off-screen
+honeypot field (`company`) plus required-field and email validation.
+
+### Environment variables (Cloudflare Pages → Settings → Environment variables, encrypted)
+
+| Variable | Required | Notes |
+|---|---|---|
+| `RESEND_API_KEY` | **yes** | From resend.com. Free tier is 3,000 emails/month. Without it the endpoint returns 503 and the visitor is shown the phone number. |
+| `LEAD_TO` | no | Defaults to `sales@on-sitespecialists.com`. |
+| `LEAD_FROM` | no | Defaults to `On-Site Website <website@on-sitespecialists.com>`. **The domain here must be verified in Resend before anything sends.** |
+
+**Sending-domain caveat while DNS still points at GoDaddy:** verifying `on-sitespecialists.com` in
+Resend means adding DKIM/SPF records to whichever nameservers are authoritative. Until the
+nameserver cutover, that would mean editing DNS at GoDaddy. To test before cutover, set `LEAD_FROM`
+to an address on a domain already verified in Resend, then switch it back after go-live.
+
+If the send ever fails, the visitor is told to call — the phone number and email stay prominent on
+the site so nobody is ever left with a dead end.
 
 ## AI chat widget
 

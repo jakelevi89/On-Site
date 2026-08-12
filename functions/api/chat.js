@@ -19,8 +19,8 @@
 //   CHAT_RL                 (optional KV namespace binding - see rate limiting)
 //
 // NOTE: this endpoint stores nothing and creates no lead record. Anyone ready to
-// move forward gets routed to the phone number, which is the one path that
-// actually reaches the team (the contact form has no backend yet - see README).
+// move forward gets routed to the phone number or to the contact form, which now
+// does deliver (see functions/api/lead.js).
 //
 // ABUSE SURFACE - READ BEFORE TRUSTING THE ORIGIN CHECK.
 // The origin allowlist below is NOT authentication. It stops a browser on some

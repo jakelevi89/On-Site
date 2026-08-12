@@ -503,6 +503,26 @@ main { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 }
 .form-note { font-size: 0.8rem; color: var(--text-light); font-style: italic; }
 
+/* Spam honeypot (see HONEYPOT in build/build.js). Positioned off-screen rather than
+   display:none or visibility:hidden — the simple bots this targets skip fields hidden
+   those two ways, but happily fill one that is technically laid out. Real visitors
+   never see or tab into it. */
+.form-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Inline submit feedback. Empty until main.js writes to it, so it takes no vertical
+   space on a fresh form — :empty keeps it from opening a gap under the button. */
+.form-status { margin: 0; font-size: 0.9rem; line-height: 1.5; }
+.form-status:empty { display: none; }
+.form-status-pending { color: var(--text-light); }
+.form-status-ok { color: #1c6b3f; font-weight: 600; }
+.form-status-error { color: var(--brand-red); font-weight: 600; }
+
 /* ---- Footer ---- */
 .site-footer { background: var(--bg-alt); margin-top: 2rem; border-top: 1px solid var(--border); }
 .footer-inner {

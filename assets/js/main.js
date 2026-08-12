@@ -24,15 +24,92 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  var form = document.querySelector("form[data-static-form]");
-  if (form) {
+  // ---- lead forms (Contact Us + Cleaning quick form) ----
+  // Progressive enhancement over a real <form action="/api/lead" method="POST">: with
+  // JS off the browser just posts the form and the Pages Function replies with a
+  // thank-you page, so the form works either way. Here we upgrade it to a fetch so
+  // the visitor keeps their place on the page and gets an inline status message
+  // instead of a full navigation.
+  //
+  // querySelectorAll, not querySelector — the old handler bound only the FIRST form on
+  // the page, which is exactly how a second form would silently go dead.
+  //
+  // Visitor-facing copy only in here: no developer or README language ever reaches
+  // this string, and every failure path names the phone number, because a form error
+  // the visitor cannot act on is the same as a lost lead.
+  var PHONE_FALLBACK = "Sorry — something went wrong sending that. Please call us at (949) 770-8989 and we'll take care of you right away.";
+
+  document.querySelectorAll("form[data-lead-form]").forEach(function (form) {
+    var status = form.querySelector("[data-form-status]");
+    var button = form.querySelector('button[type="submit"]');
+    var busy = false;
+
+    function setStatus(message, state) {
+      if (!status) return;
+      status.textContent = message;
+      status.className = "form-status" + (state ? " form-status-" + state : "");
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      // Visitor-facing copy only — no developer/README language here. The form has no
-      // backend yet (see README "Contact form"), so send people to the phone instead.
-      alert("Thanks for reaching out! For the fastest response, please call us at (949) 770-8989 and we'll get your free consultation scheduled.");
+      if (busy) return;
+
+      // Let the browser's own validation speak first — it points at the offending
+      // field, which a generic message at the bottom of the form cannot do.
+      if (typeof form.reportValidity === "function" && !form.reportValidity()) return;
+
+      busy = true;
+      if (button) {
+        button.disabled = true;
+        button.dataset.label = button.textContent;
+        button.textContent = "Sending...";
+      }
+      setStatus("Sending...", "pending");
+
+      var payload = {};
+      new FormData(form).forEach(function (value, key) {
+        payload[key] = value;
+      });
+
+      fetch(form.getAttribute("action"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then(function (res) {
+          return res.json().then(
+            function (body) {
+              return { ok: res.ok && body && body.ok, body: body };
+            },
+            function () {
+              return { ok: false, body: null };
+            }
+          );
+        })
+        .then(function (result) {
+          if (result.ok) {
+            form.reset();
+            setStatus("Thanks for reaching out — we've got your message and will be in touch shortly.", "ok");
+          } else {
+            // A 400 carries a message the visitor can actually fix (bad email, blank
+            // required field); anything else is our problem, so give them the phone.
+            var msg = result.body && result.body.error;
+            var actionable = msg && /email|field/i.test(msg);
+            setStatus(actionable ? msg : PHONE_FALLBACK, "error");
+          }
+        })
+        .catch(function () {
+          setStatus(PHONE_FALLBACK, "error");
+        })
+        .then(function () {
+          busy = false;
+          if (button) {
+            button.disabled = false;
+            button.textContent = button.dataset.label || "Send";
+          }
+        });
     });
-  }
+  });
 });
 
 // The homepage "Find Us On" photo carousel was removed 2026-08-08 — live shows those
