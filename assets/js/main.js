@@ -79,10 +79,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(function (res) {
           return res.json().then(
             function (body) {
-              return { ok: res.ok && body && body.ok, body: body };
+              return { ok: res.ok && body && body.ok, status: res.status, body: body };
             },
             function () {
-              return { ok: false, body: null };
+              return { ok: false, status: res.status, body: null };
             }
           );
         })
@@ -91,11 +91,17 @@ document.addEventListener("DOMContentLoaded", function () {
             form.reset();
             setStatus("Thanks for reaching out — we've got your message and will be in touch shortly.", "ok");
           } else {
-            // A 400 carries a message the visitor can actually fix (bad email, blank
-            // required field); anything else is our problem, so give them the phone.
+            // ONLY a 400 carries a message the visitor can act on (bad email, blank
+            // required field). Every other status is our problem, so show the phone
+            // instead of whatever the server said.
+            //
+            // This keys off the STATUS, not the text of the message. It used to sniff
+            // the message for /email|field/ — which meant the 503 "Email service is
+            // not configured" matched on the word "email" and got printed to real
+            // visitors verbatim. Server strings are developer-facing; never render one
+            // unless the status says it was written for the visitor.
             var msg = result.body && result.body.error;
-            var actionable = msg && /email|field/i.test(msg);
-            setStatus(actionable ? msg : PHONE_FALLBACK, "error");
+            setStatus(result.status === 400 && msg ? msg : PHONE_FALLBACK, "error");
           }
         })
         .catch(function () {
