@@ -20,7 +20,8 @@
 //   RESEND_API_KEY  (REQUIRED, secret) - https://resend.com, free tier is 3,000
 //                   emails/month which is far above this site's volume.
 //   LEAD_TO         (optional) - defaults to sales@on-sitespecialists.com, which
-//                   ImprovMX forwards to onsitespecialists@gmail.com.
+//                   ImprovMX forwards to onsitespecialists@gmail.com. Accepts a
+//                   comma-separated list to notify several inboxes at once.
 //   LEAD_FROM       (optional) - defaults to website@on-sitespecialists.com. This
 //                   address's DOMAIN must be verified in Resend before anything
 //                   sends. Until on-sitespecialists.com's nameservers move to
@@ -182,7 +183,13 @@ export async function onRequestPost(context) {
       : json({ ok: false, error: 'Email service is not configured.' }, 503);
   }
 
-  const to = env.LEAD_TO || 'sales@on-sitespecialists.com';
+  // Comma-separated so leads can fan out to several inboxes without a forwarder in
+  // the path. Trimmed + emptied-filtered so a stray comma or space can't produce an
+  // invalid recipient that makes Resend reject the whole send.
+  const to = (env.LEAD_TO || 'sales@on-sitespecialists.com')
+    .split(',')
+    .map((addr) => addr.trim())
+    .filter(Boolean);
   const from = env.LEAD_FROM || 'On-Site Website <website@on-sitespecialists.com>';
 
   const who = form.label === 'Cleaning Quick Form' ? `${values.firstName} ${values.lastName}`.trim() : values.name;
@@ -211,7 +218,7 @@ export async function onRequestPost(context) {
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from,
-        to: [to],
+        to,
         subject,
         text,
         html,
