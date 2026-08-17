@@ -16,6 +16,22 @@ function u(p) {
   return BASE + p;
 }
 
+// ---- canonical URLs ----
+// Always the real production domain (on-sitespecialists.com), independent of
+// BASE_PATH/GH Pages preview hosting — this is what search engines should index,
+// not the jakelevi89.github.io preview.
+//
+// The trailing slash is load-bearing. Production serves each page ONLY at its
+// slash form: /about-us/ is a 200, /about-us is a 308 to it. When the canonical
+// tag dropped the slash it pointed at a redirect rather than the page, so Google
+// treated the sitemap's /about-us/ as an *alternate* of /about-us and reported
+// "Alternate page with proper canonical tag" against the whole site (GSC emails,
+// 2026-08-17). Canonical, sitemap and robots must agree on this exact form.
+const PRODUCTION_ORIGIN = "https://www.on-sitespecialists.com";
+function canonicalUrl(pagePath) {
+  return PRODUCTION_ORIGIN + (pagePath === "/" ? "/" : pagePath + "/");
+}
+
 // ---- form spam honeypot ----
 // A field real visitors never see and never fill, but bots fill every input they
 // find. functions/api/lead.js drops any submission where "company" has a value.
@@ -693,7 +709,7 @@ ${sectionsHtml}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(page.title)}</title>
 <meta name="description" content="${esc(page.description)}">
-<link rel="canonical" href="https://www.on-sitespecialists.com${page.path}">
+<link rel="canonical" href="${canonicalUrl(page.path)}">
 <link rel="icon" href="${u("/assets/images/" + FAVICON_FILE)}" sizes="192x192">
 <link rel="stylesheet" href="${u("/assets/css/style.css")}">
 </head>
@@ -731,14 +747,12 @@ for (const page of PAGES) {
 console.log(`Built ${count} pages.`);
 
 // ---- sitemap.xml + robots.txt ----
-// Always declares the real production domain (on-sitespecialists.com), independent of
-// BASE_PATH/GH Pages preview hosting — this is what search engines should index once
-// DNS points here, not the current jakelevi89.github.io preview.
-const PRODUCTION_ORIGIN = "https://www.on-sitespecialists.com";
-const today = "2026-08-10"; // bump this when regenerating after real content changes
+// Same canonicalUrl() the <link rel="canonical"> tags use, so the two can never
+// drift apart again (see the note on canonicalUrl above).
+const today = "2026-08-17"; // bump this when regenerating after real content changes
 const sitemapUrls = PAGES.map(
   (p) => `  <url>
-    <loc>${PRODUCTION_ORIGIN}${p.path === "/" ? "/" : p.path + "/"}</loc>
+    <loc>${canonicalUrl(p.path)}</loc>
     <lastmod>${today}</lastmod>
   </url>`
 ).join("\n");
