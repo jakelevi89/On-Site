@@ -41,6 +41,16 @@ function canonicalUrl(pagePath) {
 // stops browsers helpfully filling it in for a real person.
 const HONEYPOT = `<p class="form-hp" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></p>`;
 
+// ---- Cloudflare Turnstile bot check ----
+// The honeypot alone does not stop bots that post straight to /api/lead, so the
+// function also requires a Turnstile token (TURNSTILE_SECRET_KEY, set encrypted on
+// the Cloudflare Pages project). interaction-only keeps the widget invisible unless
+// Cloudflare wants a click. The site key is public by design; the secret never
+// lives in this repo.
+const TURNSTILE_SITEKEY = "0x4AAAAAAE4v96FtHmVuMJTb";
+const TURNSTILE = `<div class="cf-turnstile" data-sitekey="${TURNSTILE_SITEKEY}" data-appearance="interaction-only"></div>
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
+
 // ---- image manifest ----
 // manifest.txt lines: "img_000.png\t<original wix url>"
 const manifestPath = path.join(IMAGES_DIR, "manifest.txt");
@@ -558,6 +568,7 @@ function renderSection(section, pageSeed, idx) {
           <label>Phone<input type="tel" name="phone" autocomplete="tel"></label>
           <label>Where did you hear about us?<input type="text" name="referral"></label>
           <label>Message<textarea name="message" rows="4"></textarea></label>
+          ${TURNSTILE}
           <button type="submit" class="btn btn-accent">Send</button>
           <p class="form-status" data-form-status role="status" aria-live="polite"></p>
         </form>
@@ -578,6 +589,7 @@ function renderSection(section, pageSeed, idx) {
           <label>First Name<input type="text" name="firstName" autocomplete="given-name" required></label>
           <label>Last Name<input type="text" name="lastName" autocomplete="family-name" required></label>
           <label>Email<input type="email" name="email" autocomplete="email" required></label>
+          ${TURNSTILE}
           <button type="submit" class="btn btn-accent">Send</button>
           <p class="form-status" data-form-status role="status" aria-live="polite"></p>
         </form>

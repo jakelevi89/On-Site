@@ -39,10 +39,33 @@ document.addEventListener("DOMContentLoaded", function () {
   // the visitor cannot act on is the same as a lost lead.
   var PHONE_FALLBACK = "Sorry — something went wrong sending that. Please call us at (949) 770-8989 and we'll take care of you right away.";
 
+  // Turnstile writes its token into a hidden cf-turnstile-response input once the
+  // check passes, usually within a second or two of page load. Waiting for it keeps a
+  // fast submitter from being refused by /api/lead for a token that was still coming.
+  function waitForTurnstile(form, ms) {
+    return new Promise(function (resolve) {
+      var start = Date.now();
+      (function check() {
+        var el = form.querySelector('[name="cf-turnstile-response"]');
+        if (el && el.value) return resolve(el.value);
+        if (Date.now() - start > ms) return resolve("");
+        setTimeout(check, 250);
+      })();
+    });
+  }
+
   document.querySelectorAll("form[data-lead-form]").forEach(function (form) {
     var status = form.querySelector("[data-form-status]");
     var button = form.querySelector('button[type="submit"]');
     var busy = false;
+
+    // Tokens are single-use, so every attempt after the first needs a fresh one.
+    function resetTurnstile() {
+      var widget = form.querySelector(".cf-turnstile");
+      if (window.turnstile && widget) {
+        try { window.turnstile.reset(widget); } catch (err) {}
+      }
+    }
 
     function setStatus(message, state) {
       if (!status) return;
@@ -71,11 +94,15 @@ document.addEventListener("DOMContentLoaded", function () {
         payload[key] = value;
       });
 
-      fetch(form.getAttribute("action"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
+      waitForTurnstile(form, 10000)
+        .then(function (token) {
+          payload["cf-turnstile-response"] = token;
+          return fetch(form.getAttribute("action"), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        })
         .then(function (res) {
           return res.json().then(
             function (body) {
@@ -89,6 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(function (result) {
           if (result.ok) {
             form.reset();
+            resetTurnstile();
             setStatus("Thanks for reaching out — we've got your message and will be in touch shortly.", "ok");
           } else {
             // ONLY a 400 carries a message the visitor can act on (bad email, blank
@@ -102,10 +130,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // unless the status says it was written for the visitor.
             var msg = result.body && result.body.error;
             setStatus(result.status === 400 && msg ? msg : PHONE_FALLBACK, "error");
+            resetTurnstile();
           }
         })
         .catch(function () {
           setStatus(PHONE_FALLBACK, "error");
+          resetTurnstile();
         })
         .then(function () {
           busy = false;

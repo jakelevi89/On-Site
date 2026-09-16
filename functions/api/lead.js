@@ -39,7 +39,7 @@
 // false negative is a LOST LEAD, which is the whole failure this endpoint exists to
 // prevent. So a request with NO Origin header is allowed through (some privacy
 // extensions and non-JS form posts strip it) and only a present-but-wrong Origin is
-// rejected. Spam is handled by the honeypot + field validation below instead.
+// rejected. Spam is handled by the honeypot + Turnstile + field validation below instead.
 const ALLOWED_ORIGINS = [
   'https://www.on-sitespecialists.com',
   'https://on-sitespecialists.com',
@@ -75,6 +75,29 @@ const FORMS = {
     ],
   },
 };
+
+// Cloudflare Turnstile bot check, enforced once TURNSTILE_SECRET_KEY is set on the
+// Pages project. A missing or rejected token is refused. If Cloudflare's verify
+// endpoint itself is unreachable the lead goes through, for the same reason the
+// Origin check is forgiving: a lost lead costs more than one spam message.
+async function passesTurnstile(token, request, secret) {
+  if (!secret) return true;
+  if (!token) return false;
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: new URLSearchParams({
+        secret,
+        response: String(token),
+        remoteip: request.headers.get('CF-Connecting-IP') || '',
+      }),
+    });
+    const out = await res.json();
+    return out.success === true;
+  } catch {
+    return true;
+  }
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -162,6 +185,15 @@ export async function onRequestPost(context) {
   // Honeypot: a hidden field real people never see and never fill. Bots fill every
   // input they find. Silently report success so the bot does not learn to retry.
   if (clean(data.company)) return isBrowserPost ? htmlPage('Thank you', 'Your message has been sent.', true) : json({ ok: true });
+
+  // Bots that post straight to this endpoint skip the honeypot entirely. A plain
+  // browser post with JavaScript off cannot run Turnstile either, so it gets the
+  // phone number here rather than a silent drop.
+  if (!(await passesTurnstile(data['cf-turnstile-response'], request, env.TURNSTILE_SECRET_KEY))) {
+    return isBrowserPost
+      ? htmlPage("We couldn't verify that", 'Please go back and try again, or call us at (949) 770-8989 and we will take care of you right away.', false)
+      : json({ ok: false, error: 'Verification failed' }, 403);
+  }
 
   const form = FORMS[clean(data.formType)] || FORMS.contact;
 
