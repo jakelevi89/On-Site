@@ -116,7 +116,8 @@ submission to `sales@on-sitespecialists.com` (ImprovMX forwards that to the Gmai
 The `<form>` has a real `action`/`method`, so it still works with JavaScript off — the Function
 replies with a plain thank-you page. With JS on, `assets/js/main.js` upgrades it to a `fetch` and
 shows an inline status message instead of navigating away. Spam is filtered by an off-screen
-honeypot field (`company`) plus required-field and email validation.
+honeypot field (`hp_extra`), a Cloudflare Turnstile check, and required-field and email
+validation. The honeypot is ignored once Turnstile passes, because browser autofill can fill it.
 
 ### Environment variables (Cloudflare Pages → Settings → Environment variables, encrypted)
 

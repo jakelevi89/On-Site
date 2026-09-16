@@ -182,17 +182,23 @@ export async function onRequestPost(context) {
     return json({ ok: false, error: 'Malformed request' }, 400);
   }
 
-  // Honeypot: a hidden field real people never see and never fill. Bots fill every
-  // input they find. Silently report success so the bot does not learn to retry.
-  if (clean(data.company)) return isBrowserPost ? htmlPage('Thank you', 'Your message has been sent.', true) : json({ ok: true });
-
-  // Bots that post straight to this endpoint skip the honeypot entirely. A plain
-  // browser post with JavaScript off cannot run Turnstile either, so it gets the
+  // Turnstile first. Bots that post straight to this endpoint never get a token, and a
+  // plain browser post with JavaScript off cannot run Turnstile either, so both get the
   // phone number here rather than a silent drop.
-  if (!(await passesTurnstile(data['cf-turnstile-response'], request, env.TURNSTILE_SECRET_KEY))) {
+  const turnstileOk = await passesTurnstile(data['cf-turnstile-response'], request, env.TURNSTILE_SECRET_KEY);
+  if (!turnstileOk) {
     return isBrowserPost
       ? htmlPage("We couldn't verify that", 'Please go back and try again, or call us at (949) 770-8989 and we will take care of you right away.', false)
       : json({ ok: false, error: 'Verification failed' }, 403);
+  }
+
+  // Honeypot: a hidden field real people never see. Bots fill every input they find, so a
+  // filled one gets a silent "success" and nothing is sent. It is only trusted when
+  // Turnstile is NOT configured, because browser autofill fills hidden fields too: when
+  // this field was named "company", Chrome filled it for a real visitor and their lead
+  // was silently dropped (2026-09-16). A passed Turnstile check outranks the honeypot.
+  if (clean(data.hp_extra) && !env.TURNSTILE_SECRET_KEY) {
+    return isBrowserPost ? htmlPage('Thank you', 'Your message has been sent.', true) : json({ ok: true });
   }
 
   const form = FORMS[clean(data.formType)] || FORMS.contact;

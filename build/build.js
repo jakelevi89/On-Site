@@ -34,12 +34,16 @@ function canonicalUrl(pagePath) {
 
 // ---- form spam honeypot ----
 // A field real visitors never see and never fill, but bots fill every input they
-// find. functions/api/lead.js drops any submission where "company" has a value.
+// find. functions/api/lead.js drops any submission where "hp_extra" has a value
+// (only while Turnstile is not configured - see the note there).
 // Hidden with off-screen positioning rather than display:none or type="hidden",
 // because the crude bots this is aimed at skip both of those. tabindex=-1 and
-// aria-hidden keep it out of keyboard and screen-reader flow, and autocomplete=off
-// stops browsers helpfully filling it in for a real person.
-const HONEYPOT = `<p class="form-hp" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></p>`;
+// aria-hidden keep it out of keyboard and screen-reader flow.
+// The name and label must NOT look like a real field. It used to be name="company"
+// with a "Company" label, and Chrome autofill ignores autocomplete=off for fields it
+// recognizes: it filled this in for a real visitor and their lead was silently
+// dropped (2026-09-16).
+const HONEYPOT = `<p class="form-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="hp_extra" tabindex="-1" autocomplete="off"></label></p>`;
 
 // ---- Cloudflare Turnstile bot check ----
 // The honeypot alone does not stop bots that post straight to /api/lead, so the
